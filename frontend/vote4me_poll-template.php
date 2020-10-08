@@ -29,8 +29,8 @@ while ( have_posts() ) : the_post();
 				<h1 class="vote4me_title">
 					<span class="vote4me_title_exact"><?php the_title();?></span>
 				  <span class="vote4me_survey-stage">
-				  <span class="vote4me_stage vote4me_live vote4me_active" <?php if($vote4me_poll_status !== 'live') echo 'style="display:none;"';?>>Live</span>
-				  <span class="vote4me_stage vote4me_ended vote4me_active" <?php if($vote4me_poll_status !== 'end') echo 'style="display:none;"';?>>Ended</span>
+				  <span class="vote4me_stage vote4me_live vote4me_active" <?php if($vote4me_poll_status !== 'live') echo 'style="display:none;"';?>>Votació activa</span>
+				  <span class="vote4me_stage vote4me_ended vote4me_active" <?php if($vote4me_poll_status !== 'end') echo 'style="display:none;"';?>>Votació tancada</span>
 				  </span>
 				</h1>
 				<div class="vote4me_inner">
