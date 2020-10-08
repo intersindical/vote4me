@@ -15,6 +15,8 @@ while ( have_posts() ) : the_post();
 			$vote4me_option_sexes = get_post_meta( get_the_id(), 'vote4me_poll_option_sex', true );
 			$vote4me_option_territorials = array();
 			$vote4me_option_territorials = get_post_meta( get_the_id(), 'vote4me_poll_option_territorial', true );
+			$vote4me_option_secretaries = array();
+			$vote4me_option_secretaries = get_post_meta( get_the_id(), 'vote4me_poll_option_secretaria', true );
 			$vote4me_poll_status = get_post_meta( get_the_id(), 'vote4me_poll_status', true );
 			$vote4me_poll_option_id = get_post_meta( get_the_id(), 'vote4me_poll_option_id', true );
 			$vote4me_poll_style = get_post_meta( get_the_id(), 'vote4me_poll_style', true );
@@ -53,13 +55,19 @@ while ( have_posts() ) : the_post();
 				<div class="vote4me_survey-name">
 				  <?php echo $vote4me_option_name;?>
 				</div>
+				<div class="vote4me_survey-territorial">
+				  <?php echo $vote4me_option_territorials[$i];?>
+				</div>
+				<div class="vote4me_survey-secretaria">
+				  <?php echo $vote4me_option_secretaries[$i];?>
+				</div>
 
 			<div class="vote4me_survey-item-action <?php if(vote4me_check_for_unique_voting(get_the_id(),$vote4me_poll_option_id[$i])) echo 'vote4me_survey-item-action-disabled';?>">
 				<?php if(!vote4me_check_for_unique_voting(get_the_id(),$vote4me_poll_option_id[$i])):?>
 				<form action="" name="vote4me_survey-item-action-form" class="vote4me_survey-item-action-form">
 					<input type="hidden" name="vote4me_poll-id" id="vote4me_poll-id" value="<?php echo get_the_id();?>">
 					<input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_poll_option_id[$i];?>">
-					<input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vote">
+					<input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vota">
 				</form>
 				<?php else:?>
 					<span class="vote4me_green_gradient vote4me_list_style_already_voted">Already Voted</span>
@@ -128,13 +136,19 @@ while ( have_posts() ) : the_post();
 				<div class="vote4me_survey-name">
 				  <?php echo $vote4me_option_name;?>
 				</div>
+				<div class="vote4me_survey-territorial">
+				  <?php echo $vote4me_option_territorials[$i];?>
+				</div>
+				<div class="vote4me_survey-secretaria">
+				  <?php echo $vote4me_option_secretaries[$i];?>
+				</div>
 
 				<div class="vote4me_survey-item-action<?php if(vote4me_check_for_unique_voting(get_the_id(),$vote4me_poll_option_id[$i])) echo ' vote4me_survey-item-action-disabled';?>">
 					<?php if(!vote4me_check_for_unique_voting(get_the_id(),$vote4me_poll_option_id[$i])){?>
 					<form action="" name="vote4me_survey-item-action-form" class="vote4me_survey-item-action-form">
 						<input type="hidden" name="vote4me_poll-id" id="vote4me_poll-id" value="<?php echo get_the_id();?>">
 						<input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_poll_option_id[$i];?>">
-						<input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vote">
+						<input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vota">
 					</form>
 				</div>
 				<?php }else{ echo '<span style="border-top:1px solid #ccc;border-bottom:1px solid #ccc; padding:0px; margin:5px; display:inline-block; color: #fc6462;">You Already Participated!</span>';}?>

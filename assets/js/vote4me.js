@@ -47,9 +47,9 @@ jQuery(document).ready(function($) {
 				<td><input type="button" class="button" id="vote4me_poll_option_ci_btn" name="vote4me_poll_option_ci_btn" value="Upload"></td></tr> \
 			<tr><td>Sexe</td> \
 				<td><select class="widefat" id="vote4me_poll_option_sex" name="vote4me_poll_option_sex[]" value="" required> \
-					<option value="Male">Male</option> \
-					<option value="Female">Female</option> \
-					<option value="Other">Other</option> \
+					<option value="male">Male</option> \
+					<option value="female">Female</option> \
+					<option value="other">Other</option> \
 					</select></td></tr> \
 			<tr><td>Territorial</td> \
 				<td><select class="widefat" id="vote4me_poll_option_territorial" name="vote4me_poll_option_territorial[]" value="" required> \
@@ -63,6 +63,16 @@ jQuery(document).ready(function($) {
 					<option value="Terres de l\'Ebre">Terres de l\'Ebre</option> \
 					<option value="Vallès Occidental">Vallès Occidental</option> \
 					<option value="Barcelona">Barcelona</option> \
+					</select></td></tr> \
+			<tr><td>Secretaria</td> \
+				<td><select class="widefat" id="vote4me_poll_option_secretaria" name="vote4me_poll_option_secretaria[]" value="" required> \
+					<option value="Organització">Organització</option> \
+					<option value="Acció sindical">Acció sindical</option> \
+					<option value="Comunicació">Comunicació</option> \
+					<option value="Política educativa i igualtat">Política educativa i igualtat</option> \
+					<option value="Formació">Formació</option> \
+					<option value="Ensenyament concertat i privat">Ensenyament concertat i privat</option> \
+					<option value="Juntes de personal">Juntes de personal</option> \
 					</select></td></tr> \
 			<tr><td colspan="2"><input type="button" class="button" id="vote4me_poll_option_rm_btn" name="vote4me_poll_option_rm_btn" value="Remove This Option"></td></tr></table></td></tr>');
 		

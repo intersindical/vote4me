@@ -39,6 +39,7 @@ function vote4me_metabox_forms( $post ) {
 	$vote4me_poll_option_id = get_post_meta( $post->ID, 'vote4me_poll_option_id', true );
 	$vote4me_poll_option_sex = get_post_meta( $post->ID, 'vote4me_poll_option_sex', true );
 	$vote4me_poll_option_territorial = get_post_meta( $post->ID, 'vote4me_poll_option_territorial', true );
+	$vote4me_poll_option_secretaria = get_post_meta( $post->ID, 'vote4me_poll_option_secretaria', true );
 	$vote4me_poll_style = get_post_meta( $post->ID, 'vote4me_poll_style', true );
 	$vote4me_poll_ui = get_post_meta( $post->ID, 'vote4me_poll_ui', true );
 	$vote4me_poll_vote_total_count = (int)get_post_meta($post->ID, 'vote4me_vote_total_count',true);
@@ -137,9 +138,9 @@ function vote4me_metabox_forms( $post ) {
 					<td><?php _e('Sexe','vote4me');?></td>
 					<td>
 						<select class="widefat" id="vote4me_poll_option_sex" name="vote4me_poll_option_sex[]" value="<?php echo esc_attr($vote4me_poll_option_sex,'vote4me');?>" required>
-							<option value="Male" <?php if($vote4me_poll_option_sex[$i] == 'Male') echo esc_attr('selected','vote4me');?>>Male</option>
-							<option value="Female" <?php if($vote4me_poll_option_sex[$i] == 'Female') echo esc_attr('selected','vote4me');?>>Female</option>
-							<option value="Other" <?php if($vote4me_poll_option_sex[$i] == 'Other') echo esc_attr('selected','vote4me');?>>Other</option>
+							<option value="male" <?php if($vote4me_poll_option_sex[$i] == 'male') echo esc_attr('selected','vote4me');?>>Male</option>
+							<option value="female" <?php if($vote4me_poll_option_sex[$i] == 'female') echo esc_attr('selected','vote4me');?>>Female</option>
+							<option value="other" <?php if($vote4me_poll_option_sex[$i] == 'other') echo esc_attr('selected','vote4me');?>>Other</option>
 						</select>
 					</td>
 				</tr>
@@ -158,6 +159,21 @@ function vote4me_metabox_forms( $post ) {
 							<option value="Terres de l\'Ebre" <?php if($vote4me_poll_option_territorial[$i] == 'Terres de l\'Ebre') echo esc_attr('selected','vote4me');?>>Terres de l'Ebre</option>
 							<option value="Vallès Occidental" <?php if($vote4me_poll_option_territorial[$i] == 'Vallès Occidental') echo esc_attr('selected','vote4me');?>>Vallès Occidental</option>
 							<option value="Barcelona" <?php if($vote4me_poll_option_territorial[$i] == 'Barcelona') echo esc_attr('selected','vote4me');?>>Barcelona</option>
+						</select>
+					</td>
+				</tr>
+
+				<tr>
+					<td><?php _e('Secretaria','vote4me');?></td>
+					<td>
+						<select class="widefat" id="vote4me_poll_option_secretaria" name="vote4me_poll_option_secretaria[]" value="<?php echo esc_attr($vote4me_poll_option_secretaria,'vote4me');?>" required>
+							<option value="Organització" <?php if($vote4me_poll_option_secretaria[$i] == 'Organització') echo esc_attr('selected','vote4me');?>>Organització</option>
+							<option value="Acció sindical" <?php if($vote4me_poll_option_secretaria[$i] == 'Acció sindical') echo esc_attr('selected','vote4me');?>>Acció sindical</option>
+							<option value="Comunicació" <?php if($vote4me_poll_option_secretaria[$i] == 'Comunicació') echo esc_attr('selected','vote4me');?>>Comunicació</option>
+							<option value="Política educativa i igualtat" <?php if($vote4me_poll_option_secretaria[$i] == 'Política educativa i igualtat') echo esc_attr('selected','vote4me');?>>Política educativa i igualtat</option>
+							<option value="Formació" <?php if($vote4me_poll_option_secretaria[$i] == 'Formació') echo esc_attr('selected','vote4me');?>>Formació</option>
+							<option value="Ensenyament concertat i privat" <?php if($vote4me_poll_option_secretaria[$i] == 'Ensenyament concertat i privat') echo esc_attr('selected','vote4me');?>>Ensenyament concertat i privat</option>
+							<option value="Juntes de personal" <?php if($vote4me_poll_option_secretaria[$i] == 'Juntes de personal') echo esc_attr('selected','vote4me');?>>Juntes de personal</option>
 						</select>
 					</td>
 				</tr>
@@ -290,6 +306,7 @@ function vote4me_save_options( $post_id ) {
 		update_post_meta( $post_id, 'vote4me_poll_option_id', array());
 		update_post_meta( $post_id, 'vote4me_poll_option_sex', array());
 		update_post_meta( $post_id, 'vote4me_poll_option_territorial', array());
+		update_post_meta( $post_id, 'vote4me_poll_option_secretaria', array());
 	}
 	
 	//Update Poll Options Image
@@ -341,6 +358,20 @@ function vote4me_save_options( $post_id ) {
 		}
 		update_post_meta( $post_id, 'vote4me_poll_option_territorial', $vote4me_poll_option_territorial );
 	}
+
+	//Update Poll Options Secretaria
+	if(isset($_POST['vote4me_poll_option_secretaria'])){
+		print_r($_POST['vote4me_poll_option_secretaria']);
+		$vote4me_poll_option_secretaries = $_POST['vote4me_poll_option_secretaria'];
+		$vote4me_poll_option_secretaria = array();
+		foreach($vote4me_poll_option_secretaries as $vote4me_poll_option_secretaria_key){
+			if($vote4me_poll_option_secretaria_key){
+			array_push($vote4me_poll_option_secretaria,sanitize_text_field($vote4me_poll_option_secretaria_key));
+			}
+		}
+		update_post_meta( $post_id, 'vote4me_poll_option_secretaria', $vote4me_poll_option_secretaria );
+	}
+
 
 	//Update Poll Options Id
 	if(isset($_POST['vote4me_poll_option_id'])){
