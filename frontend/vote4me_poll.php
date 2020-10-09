@@ -81,62 +81,6 @@ if ( $vote4me_post_query->have_posts()) {
 			}
 			$vote4me_poll_vote_percentage = (int)$vote4me_poll_vote_percentage;
 			?>
-			<?php if($vote4me_poll_style == 'list'){?>
-				<li class="vote4me_survey-item">
-			<div class="vote4me_survey-item-inner">
-				<div class="vote4me_survey-name">
-				  <?php echo $vote4me_option_name;?>
-				</div>
-				<div class="vote4me_survey-territorial">
-				  <?php echo $vote4me_option_territorials[$i];?>
-				</div>
-				<div class="vote4me_survey-secretaria">
-				  <?php echo $vote4me_option_secretaries[$i];?>
-				</div>
-
-			<div class="vote4me_survey-item-action <?php if(vote4me_check_for_unique_voting(get_the_id(),$vote4me_poll_option_id[$i])) echo 'vote4me_survey-item-action-disabled';?>">
-				<?php if(!vote4me_check_for_unique_voting(get_the_id(),$vote4me_poll_option_id[$i])):?>
-				<form action="" name="vote4me_survey-item-action-form" class="vote4me_survey-item-action-form">
-					<input type="hidden" name="vote4me_poll-id" id="vote4me_poll-id" value="<?php echo get_the_id();?>">
-					<input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_poll_option_id[$i];?>">
-					<input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vota">
-				</form>
-				<?php else:?>
-					<span class="vote4me_green_gradient vote4me_list_style_already_voted">Participated</span>
-				<?php endif;?>
-			</div>
-			<div class="vote4me_spinner">
-						<svg version="1.1" id="vote4me_tick" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-			 				viewBox="0 0 37 37" xml:space="preserve">
-						<path class="vote4me_circ vote4me_path" style="fill:none;stroke: #ffffff;stroke-width:2;stroke-linejoin:round;stroke-miterlimit:10;" d="
-						M30.5,6.5L30.5,6.5c6.6,6.6,6.6,17.4,0,24l0,0c-6.6,6.6-17.4,6.6-24,0l0,0c-6.6-6.6-6.6-17.4,0-24l0,0C13.1-0.2,23.9-0.2,30.5,6.5z"
-						/>
-							<polyline class="vote4me_tick vote4me_path" style="fill:none;stroke: #ffffff;stroke-width:2;stroke-linejoin:round;stroke-miterlimit:10;" points="
-						11.6,20 15.9,24.2 26.4,13.8 "/>
-						</svg>
-			</div>
-				<div class="vote4me_pull">
-
-				  <span class="vote4me_survey-progress">
-					<span class="vote4me_survey-progress-bg">
-					  <span class="vote4me_survey-progress-fg vote4me_orange_gradient" style="width:<?php echo $vote4me_poll_vote_percentage;?>%;"></span>
-				  </span>
-
-				  <span class="vote4me_survey-progress-labels">
-					  <span class="vote4me_survey-progress-label">
-						<?php echo $vote4me_poll_vote_percentage;?>%
-					  </span>
-
-				  <input type="hidden" name="vote4me_poll_e_vote_count" id="vote4me_poll_e_vote_count" value="<?php echo $vote4me_poll_vote_count;?>"/>
-				  <span class="vote4me_survey-completes">
-						<?php echo vote4me_number_shorten($vote4me_poll_vote_count)." / ".vote4me_number_shorten($vote4me_poll_vote_total_count);?>
-					  </span>
-				  </span>
-				  </span>
-				</div>
-				</div>
-		  </li>
-			<?php }else{ ?>
 		  <li class="vote4me_survey-item">
 			<div class="vote4me_survey-item-inner">
 				<div class="vote4me_big_cover">
@@ -205,7 +149,6 @@ if ( $vote4me_post_query->have_posts()) {
 				</div>
 				</div>
 		  </li>
-		<?php }?>
 <?php
 	$i++;
 	endforeach;
@@ -225,8 +168,6 @@ if ( $vote4me_post_query->have_posts()) {
 	</div>
 </div>
 <?php endwhile;
-}else{
-
 }
 
 $output = ob_get_contents();
