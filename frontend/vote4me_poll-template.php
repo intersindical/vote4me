@@ -21,7 +21,11 @@ while ( have_posts() ) : the_post();
 			$vote4me_poll_option_id = get_post_meta( get_the_id(), 'vote4me_poll_option_id', true );
 			$vote4me_poll_style = get_post_meta( get_the_id(), 'vote4me_poll_style', true );
 			$vote4me_poll_vote_total_count = (int)get_post_meta(get_the_id(), 'vote4me_vote_total_count',true);
-			$vote4me_poll_container_color_primary = get_post_meta( $post->ID, 'vote4me_poll_container_color_primary', true );?>
+			$vote4me_poll_container_color_primary = get_post_meta( $post->ID, 'vote4me_poll_container_color_primary', true );
+			
+			//sort(unique_array($vote4me_option_secretaries)
+			
+			?>
 			
 			<div class="vote4me_container"<?php if($vote4me_poll_container_color_primary){echo ' style="background: -webkit-linear-gradient(40deg,#eee,<?php echo $vote4me_poll_container_color_primary;?>)!important;
     background: -o-linear-gradient(40deg,#eee,<?php echo $vote4me_poll_container_color_primary;?>)!important;
