@@ -3,28 +3,37 @@ if (!isset($_SESSION)) session_start();
 get_header();
 
 while ( have_posts() ) : the_post();
-			$vote4me_option_names = array();
+
+			$vote4me_options = array();
+			$vote4me_options["names"] = array();
 			if(get_post_meta( get_the_id(), 'vote4me_poll_option', true )){
-				$vote4me_option_names = get_post_meta( get_the_id(), 'vote4me_poll_option', true );
+				$vote4me_options["names"] = get_post_meta( get_the_id(), 'vote4me_poll_option', true );
 			}
-			$vote4me_option_imgs = array();
-			$vote4me_option_imgs = get_post_meta( get_the_id(), 'vote4me_poll_option_img', true );
-			$vote4me_poll_option_cover_img = array();
-			$vote4me_poll_option_cover_img = get_post_meta( get_the_id(), 'vote4me_poll_option_cover_img', true );
-			$vote4me_option_sexes = array();
-			$vote4me_option_sexes = get_post_meta( get_the_id(), 'vote4me_poll_option_sex', true );
-			$vote4me_option_territorials = array();
-			$vote4me_option_territorials = get_post_meta( get_the_id(), 'vote4me_poll_option_territorial', true );
-			$vote4me_option_secretaries = array();
-			$vote4me_option_secretaries = get_post_meta( get_the_id(), 'vote4me_poll_option_secretaria', true );
+			$vote4me_options['imgs'] = array();
+			$vote4me_options['imgs'] = get_post_meta( get_the_id(), 'vote4me_poll_option_img', true );
+			$vote4me_options['cover_img'] = array();
+			$vote4me_options['cover_img'] = get_post_meta( get_the_id(), 'vote4me_poll_option_cover_img', true );
+			$vote4me_options['sexes'] = array();
+			$vote4me_options['sexes'] = get_post_meta( get_the_id(), 'vote4me_poll_option_sex', true );
+			$vote4me_options['territorials'] = array();
+			$vote4me_options['territorials'] = get_post_meta( get_the_id(), 'vote4me_poll_option_territorial', true );
+			$vote4me_options['secretaries'] = array();
+			$vote4me_options['secretaries'] = get_post_meta( get_the_id(), 'vote4me_poll_option_secretaria', true );
+			$vote4me_options['ids'] = array();
+			$vote4me_options['ids'] = get_post_meta( get_the_id(), 'vote4me_poll_option_id', true );
+
+			// Sort by secretaries
+			usort($vote4me_options, function($a, $b) {
+				return strcmp($a['secretaries'], $b['secretaries']);
+			});
+
+			// Common poll parameters
 			$vote4me_poll_status = get_post_meta( get_the_id(), 'vote4me_poll_status', true );
-			$vote4me_poll_option_id = get_post_meta( get_the_id(), 'vote4me_poll_option_id', true );
 			$vote4me_poll_style = get_post_meta( get_the_id(), 'vote4me_poll_style', true );
 			$vote4me_poll_vote_total_count = (int)get_post_meta(get_the_id(), 'vote4me_vote_total_count',true);
 			$vote4me_poll_container_color_primary = get_post_meta( $post->ID, 'vote4me_poll_container_color_primary', true );
 			
-			//sort(unique_array($vote4me_option_secretaries)
-			
+			$vote4me_secretaria_title = "";
 			?>
 			
 			<div class="vote4me_container"<?php if($vote4me_poll_container_color_primary){echo ' style="background: -webkit-linear-gradient(40deg,#eee,<?php echo $vote4me_poll_container_color_primary;?>)!important;
@@ -41,35 +50,43 @@ while ( have_posts() ) : the_post();
 				<ul class="vote4me_surveys <?php if($vote4me_poll_style == 'list') echo 'vote4me_list'; else echo 'vote4me_grid';?>">
 		<?php
 			$i=0;
-			if($vote4me_option_names){
-			foreach($vote4me_option_names as $vote4me_option_name):
-			$vote4me_poll_vote_count = (int)get_post_meta(get_the_id(), 'vote4me_vote_count_'.(float)$vote4me_poll_option_id[$i],true);
-			//print_r($vote4me_poll_option_id[$i]);
-			$vote4me_poll_vote_percentage =0;
-			if($vote4me_poll_vote_count == 0){
-			$vote4me_poll_vote_percentage =0;
-			}else{
-			$vote4me_poll_vote_percentage = (int)$vote4me_poll_vote_count*100/$vote4me_poll_vote_total_count; 
-			}
-			$vote4me_poll_vote_percentage = (int)$vote4me_poll_vote_percentage;
+			if ($vote4me_options["names"]){
+			foreach($vote4me_options["names"] as $vote4me_option_name):
+				$vote4me_poll_vote_count = (int)get_post_meta(get_the_id(), 'vote4me_vote_count_'.(float)$vote4me_options['ids'][$i],true);
+				//print_r($vote4me_options['ids'][$i]);
+				$vote4me_poll_vote_percentage = 0;
+				if ($vote4me_poll_vote_count == 0){
+					$vote4me_poll_vote_percentage = 0;
+				}else{
+					$vote4me_poll_vote_percentage = (int)$vote4me_poll_vote_count*100/$vote4me_poll_vote_total_count; 
+				}
+				$vote4me_poll_vote_percentage = (int)$vote4me_poll_vote_percentage;
 			?>
-			
-			
+
+			<?php
+				if ($vote4me_options['secretaries'][$i] != $vote4me_secretaria_title) {
+					$vote4me_secretaria_title = $vote4me_options['secretaries'][$i];
+					?>
+					<div class="vote4me_secretaria_title"><?php echo $vote4me_secretaria_title;?></div>
+					<?php
+				}
+			?>
+
+
 		  <li class="vote4me_survey-item">
 
 			<div class="vote4me_survey-item-inner vote4me_card_front">
 				<div class="vote4me_big_cover">
-					  <?php if($vote4me_poll_option_cover_img){
-	
-						 	if(isset($vote4me_poll_option_cover_img[$i])){
-							 	echo '<img src="'.$vote4me_poll_option_cover_img[$i].'">';
-							 }
-					}?>		
+					  <?php if ($vote4me_options["cover_img"]){
+						 		if (isset($vote4me_options["cover_img"][$i])){
+							 		echo '<img src="'.$vote4me_options["cover_img"][$i].'">';
+							 	}
+							}?>		
 				</div>
 				
-				<?php if(isset($vote4me_option_imgs[$i])){?>
+				<?php if (isset($vote4me_options["imgs"][$i])){?>
 				<div class="vote4me_survey-country vote4me_grid-only">
-				  <img src="<?php echo $vote4me_option_imgs[$i];?>">
+				  <img src="<?php echo $vote4me_options["imgs"][$i];?>">
 				  <div class="vote4me_spinner">
 				  	<svg version="1.1" id="vote4me_tick" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 				viewBox="0 0 37 37" xml:space="preserve">
@@ -87,21 +104,25 @@ while ( have_posts() ) : the_post();
 				  <?php echo $vote4me_option_name;?>
 				</div>
 				<div class="vote4me_survey-territorial">
-				  <?php echo $vote4me_option_territorials[$i];?>
+				  <?php echo $vote4me_options["territorials"][$i];?>
 				</div>
 				<div class="vote4me_survey-secretaria">
-				  <?php echo $vote4me_option_secretaries[$i];?>
+				  <?php echo $vote4me_options["secretaries"][$i];?>
 				</div>
 
-				<div class="vote4me_survey-item-action<?php if(vote4me_check_for_unique_voting(get_the_id(),$vote4me_poll_option_id[$i])) echo ' vote4me_survey-item-action-disabled';?>">
-					<?php if(!vote4me_check_for_unique_voting(get_the_id(),$vote4me_poll_option_id[$i])){?>
+				<div class="vote4me_survey-item-action<?php if (vote4me_check_for_unique_voting(get_the_id(),$vote4me_options['ids'][$i])) echo ' vote4me_survey-item-action-disabled';?>">
+					<?php if (!vote4me_check_for_unique_voting(get_the_id(), $vote4me_options['ids'][$i])){?>
 					<form action="" name="vote4me_survey-item-action-form" class="vote4me_survey-item-action-form">
 						<input type="hidden" name="vote4me_poll-id" id="vote4me_poll-id" value="<?php echo get_the_id();?>">
-						<input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_poll_option_id[$i];?>">
+						<input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_options['ids'][$i];?>">
+						<input type="hidden" name="vote4me_secretaria" id="vote4me_secretaria" value="<?php echo $vote4me_option_secretaries[$i];?>">
 						<input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vota">
 					</form>
 				</div>
-				<?php }else{ echo '<span style="border-top:1px solid #ccc;border-bottom:1px solid #ccc; padding:0px; margin:5px; display:inline-block; color: #fc6462;">You Already Participated!</span>';}?>
+				<?php } else {
+					 echo '<span style="border-top:1px solid #ccc;border-bottom:1px solid #ccc; padding:0px; margin:5px; display:inline-block; color: #fc6462;">You Already Participated!</span>';
+					}
+				?>
 			
 
 				<div class="vote4me_pull-right">
@@ -140,7 +161,7 @@ while ( have_posts() ) : the_post();
 	 
 	</div>
 	<div class="vote4me_powered_by">
-		<a href="https://educacio.intersindical-csc.cat/" target="_blank" rel="nofollow">Intersindical-CSC</a>
+		<a href="https://educacio.intersindical-csc.cat/" target="_blank" rel="nofollow">Sectorial d'educació de la Intersindical-CSC</a>
 	</div>
 </div>
 <?php endwhile;

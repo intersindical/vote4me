@@ -123,6 +123,7 @@ if ( $vote4me_post_query->have_posts()) {
 					<form action="" name="vote4me_survey-item-action-form" class="vote4me_survey-item-action-form">
 						<input type="hidden" name="vote4me_poll-id" id="vote4me_poll-id" value="<?php echo get_the_id();?>">
 						<input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_poll_option_id[$i];?>">
+						<input type="hidden" name="vote4me_secretaria" id="vote4me_secretaria" value="<?php echo $vote4me_option_secretaries[$i];?>">
 						<input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vota">
 					</form>
 				</div>
@@ -164,7 +165,7 @@ if ( $vote4me_post_query->have_posts()) {
 	 
 	</div>
 	<div class="vote4me_powered_by">
-		<a href="https://educacio.intersindical-csc.cat/" target="_blank" rel="nofollow">Intersindical-CSC</a>
+		<a href="https://educacio.intersindical-csc.cat/" target="_blank" rel="nofollow">Sectorial d'educació de la Intersindical-CSC</a>
 	</div>
 </div>
 <?php endwhile;
