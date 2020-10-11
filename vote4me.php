@@ -175,70 +175,72 @@ if(!function_exists('get_vote4me_poll_template')){
 	}
 }
 
-if(!function_exists('ajax_vote4me_vote')){
+if (!function_exists('ajax_vote4me_vote')){
 
-add_action( 'wp_ajax_vote4me_vote', 'ajax_vote4me_vote' );
-add_action( 'wp_ajax_nopriv_vote4me_vote', 'ajax_vote4me_vote' );
+	add_action( 'wp_ajax_vote4me_vote', 'ajax_vote4me_vote' );
+	add_action( 'wp_ajax_nopriv_vote4me_vote', 'ajax_vote4me_vote' );
 
-function ajax_vote4me_vote() {
+	function ajax_vote4me_vote() {
 	
-	if(isset($_POST['action']) and $_POST['action'] == 'vote4me_vote')
-	{
-		@session_start();
-		if(isset($_POST['poll_id'])){
-		$poll_id = intval(sanitize_text_field($_POST['poll_id']));
-		}
+		if (isset($_POST['action']) and $_POST['action'] == 'vote4me_vote')
+		{
+			@session_start();
+			if (isset($_POST['poll_id'])){
+				$poll_id = intval(sanitize_text_field($_POST['poll_id']));
+			}
 
-		if(isset($_POST['option_id'])){
-		$option_id = (float) sanitize_text_field($_POST['option_id']);
-		}
+			if (isset($_POST['option_id'])){
+				$option_id = (float) sanitize_text_field($_POST['option_id']);
+			}
 
-		
-		//Validate Poll ID
-		if ( ! $poll_id ) {
-		  $poll_id = '';
-		  $_SESSION['vote4me_session'] = uniqid();
-		  die(json_encode(array("voting_status"=>"error","msg"=>"Fields are required")));
-		}
+			//Validate Poll ID
+			if ( ! $poll_id ) {
+				$poll_id = '';
+				$_SESSION['vote4me_session'] = uniqid();
+				die(json_encode(array("voting_status"=>"error","msg"=>"Fields are required")));
+			}
 
-		//Validate Option ID
-		if ( ! $option_id ) {
-		  $option_id = '';
-		  $_SESSION['vote4me_session'] = uniqid();
-		 die(json_encode(array("voting_status"=>"error","msg"=>"Fields are required")));
-		}
+			//Validate Option ID
+			if ( ! $option_id ) {
+				$option_id = '';
+				$_SESSION['vote4me_session'] = uniqid();
+				die(json_encode(array("voting_status"=>"error","msg"=>"Fields are required")));
+			}
 
-		$oldest_vote = 0;
-		$oldest_total_vote = 0;
-		if(get_post_meta($poll_id, 'vote4me_vote_count_'.$option_id,true)){
-			$oldest_vote = get_post_meta($poll_id, 'vote4me_vote_count_'.$option_id,true);	
-		}
-		if(get_post_meta($poll_id, 'vote4me_vote_total_count')){
-			$oldest_total_vote = get_post_meta($poll_id, 'vote4me_vote_total_count',true);	
-		}
+			// TODO: secretaria, sexe, territorial (si és el vot final)
 
-		if(!vote4me_check_for_unique_voting($poll_id,$option_id)){
+			$oldest_vote = 0;
+			$oldest_total_vote = 0;
+			
+			if (get_post_meta($poll_id, 'vote4me_vote_count_'.$option_id,true)){
+				$oldest_vote = get_post_meta($poll_id, 'vote4me_vote_count_'.$option_id,true);	
+			}
+
+			if (get_post_meta($poll_id, 'vote4me_vote_total_count')){
+				$oldest_total_vote = get_post_meta($poll_id, 'vote4me_vote_total_count',true);	
+			}
+
+			if (!vote4me_check_for_unique_voting($poll_id,$option_id)){
+					
+				$new_total_vote = intval($oldest_total_vote) + 1;
+				$new_vote = (int)$oldest_vote + 1;
+				update_post_meta($poll_id, 'vote4me_vote_count_'.$option_id,$new_vote);
+				update_post_meta($poll_id, 'vote4me_vote_total_count',$new_total_vote);
+
+				$outputdata = array();
+				$outputdata['total_vote_count'] = $new_total_vote;
+				$outputdata['total_opt_vote_count'] = $new_vote;
+				$outputdata['option_id'] = $option_id;
+				$outputdata['voting_status'] = "done";
+				$outputdataPercentage = ($new_vote*100)/$new_total_vote;
+				$outputdata['total_vote_percentage'] = (int)$outputdataPercentage;
+				$_SESSION['vote4me_session_'.$poll_id] = uniqid();
 				
-		$new_total_vote = intval($oldest_total_vote) + 1;
-		$new_vote = (int)$oldest_vote + 1;
-		update_post_meta($poll_id, 'vote4me_vote_count_'.$option_id,$new_vote);
-		update_post_meta($poll_id, 'vote4me_vote_total_count',$new_total_vote);
-
-		$outputdata = array();
-		$outputdata['total_vote_count'] = $new_total_vote;
-		$outputdata['total_opt_vote_count'] = $new_vote;
-		$outputdata['option_id'] = $option_id;
-		$outputdata['voting_status'] = "done";
-		$outputdataPercentage = ($new_vote*100)/$new_total_vote;
-		$outputdata['total_vote_percentage'] = (int)$outputdataPercentage;
-		$_SESSION['vote4me_session_'.$poll_id] = uniqid();
-		
-		print_r(json_encode($outputdata));
-
+				print_r(json_encode($outputdata));
+			}
 		}
+		die();
 	}
-	die();
-}
 }
 
 //Adding Columns to epoll cpt

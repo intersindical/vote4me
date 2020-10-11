@@ -1,4 +1,10 @@
 jQuery(document).ready(function() {
+
+    // TODO: Finalitzem les votacions
+    // jQuery(this).find('#vote4me_survey-vote-button').click(function() {});
+
+
+    // Votem un candidat
     jQuery('.vote4me_survey-item').each(function() {
         var vote4me_item = jQuery(this);
 

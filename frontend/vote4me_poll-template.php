@@ -115,7 +115,7 @@ while ( have_posts() ) : the_post();
 					<form action="" name="vote4me_survey-item-action-form" class="vote4me_survey-item-action-form">
 						<input type="hidden" name="vote4me_poll-id" id="vote4me_poll-id" value="<?php echo get_the_id();?>">
 						<input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_options['ids'][$i];?>">
-						<input type="hidden" name="vote4me_secretaria" id="vote4me_secretaria" value="<?php echo $vote4me_option_secretaries[$i];?>">
+						<input type="hidden" name="vote4me_secretaria" id="vote4me_secretaria" value="<?php echo $vote4me_options_secretaries[$i];?>">
 						<input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vota">
 					</form>
 				</div>

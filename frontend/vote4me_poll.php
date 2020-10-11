@@ -63,7 +63,7 @@ if ( $vote4me_post_query->have_posts()) {
 			} else {
 				$vote4me_poll_style = get_post_meta( get_the_id(), 'vote4me_poll_style', true );
 			}
-			$vote4me_poll_vote_total_count = (int)get_post_meta(get_the_id(), 'vote4me_vote_total_count',true);
+			$vote4me_poll_vote_total_count = (int)get_post_meta(get_the_id(), 'vote4me_vote_total_count', true);
 			$vote4me_poll_container_color_primary = get_post_meta( get_the_id(), 'vote4me_poll_container_color_primary', true );
 			?>
 
@@ -148,7 +148,7 @@ if ( $vote4me_post_query->have_posts()) {
 					<form action="" name="vote4me_survey-item-action-form" class="vote4me_survey-item-action-form">
 						<input type="hidden" name="vote4me_poll-id" id="vote4me_poll-id" value="<?php echo get_the_id();?>">
 						<input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_options['ids'][$i];?>">
-						<input type="hidden" name="vote4me_secretaria" id="vote4me_secretaria" value="<?php echo $vote4me_option_secretaries[$i];?>">
+						<input type="hidden" name="vote4me_secretaria" id="vote4me_secretaria" value="<?php echo $vote4me_optionss_secretaries[$i];?>">
 						<input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vota">
 					</form>
 				</div>
@@ -178,6 +178,21 @@ if ( $vote4me_post_query->have_posts()) {
 <?php
 	$i++;
 	endforeach;
+?>
+
+<!-- TODO: Vot final (i també al vote4me_poll-template) -->
+	<div class="vote4me-vote-button">
+	<form action="" name="vote4me_survey-item-action-form" class="vote4me_survey-item-action-form">
+		<input type="hidden" name="vote4me_poll-id" id="vote4me_poll-id" value="<?php echo get_the_id();?>">
+		<input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_options['ids'][$i];?>">
+		<input type="hidden" name="vote4me_secretaria" id="vote4me_secretaria" value="<?php echo $vote4me_options['secretaries'][$i];?>">
+		<input type="hidden" name="vote4me_sexe" id="vote4me_sexe" value="<?php echo $vote4me_options['sexes'][$i];?>">
+		<input type="hidden" name="vote4me_territorial" id="vote4me_territorial" value="<?php echo $vote4me_options['territorials'][$i];?>">
+		<input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vota">
+	</form>
+	</div>
+
+	<?php
 	echo '</ul> <div style="clear:both;"></div>';	
 			}else{
 				if( current_user_can('author') || current_user_can('editor') || current_user_can('administrator') ){
