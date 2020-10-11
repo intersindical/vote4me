@@ -24,35 +24,48 @@ if ( $vote4me_post_query->have_posts()) {
 
 	while ( $vote4me_post_query->have_posts() ) : $vote4me_post_query->the_post();
 
-			$vote4me_option_names = array();
-			if(get_post_meta( get_the_id(), 'vote4me_poll_option', true )){
-				$vote4me_option_names = get_post_meta( get_the_id(), 'vote4me_poll_option', true );
+			$vote4me_options = array();
+
+			$vote4me_options['names'] = array();
+			if (get_post_meta( get_the_id(), 'vote4me_poll_option', true )){
+				$vote4me_options['names'] = get_post_meta( get_the_id(), 'vote4me_poll_option', true );
 			}
 			
-			$vote4me_option_imgs = array();
-			$vote4me_option_imgs = get_post_meta( get_the_id(), 'vote4me_poll_option_img', true );
+			$vote4me_options['imgs'] = array();
+			$vote4me_options['imgs'] = get_post_meta( get_the_id(), 'vote4me_poll_option_img', true );
 			
-			$vote4me_poll_option_cover_img = array();
-			$vote4me_poll_option_cover_img = get_post_meta( get_the_id(), 'vote4me_poll_option_cover_img', true );
+			$vote4me_options['cover_img'] = array();
+			$vote4me_options['cover_img'] = get_post_meta( get_the_id(), 'vote4me_poll_option_cover_img', true );
 			
-			$vote4me_option_sexes = array();
-			$vote4me_option_sexes = get_post_meta( get_the_id(), 'vote4me_poll_option_sex', true );
+			$vote4me_options['sexes'] = array();
+			$vote4me_options['sexes'] = get_post_meta( get_the_id(), 'vote4me_poll_option_sex', true );
 
-			$vote4me_option_territorials = array();
-			$vote4me_option_territorials = get_post_meta( get_the_id(), 'vote4me_poll_option_territorial', true );
+			$vote4me_options['territorials'] = array();
+			$vote4me_options['territorials'] = get_post_meta( get_the_id(), 'vote4me_poll_option_territorial', true );
 
-			$vote4me_option_secretaries = array();
-			$vote4me_option_secretaries = get_post_meta( get_the_id(), 'vote4me_poll_option_secretaria', true );
+			$vote4me_options['secretaries'] = array();
+			$vote4me_options['secretaries'] = get_post_meta( get_the_id(), 'vote4me_poll_option_secretaria', true );
+
+			$vote4me_options['ids'] = array();
+			$vote4me_options['ids'] = get_post_meta( get_the_id(), 'vote4me_poll_option_id', true );
+
+			// Sort by secretaries
+			usort($vote4me_options, function($a, $b) {
+				return strcmp($a['secretaries'], $b['secretaries']);
+			});
+
+			$vote4me_secretaria_title = "";
 
 			$vote4me_poll_status = get_post_meta( get_the_id(), 'vote4me_poll_status', true );
-			$vote4me_poll_option_id = get_post_meta( get_the_id(), 'vote4me_poll_option_id', true );
-			if($a['type']){
+			
+			if ($a['type']) {
 				$vote4me_poll_style = $a['type'];
-			}else{
+			} else {
 				$vote4me_poll_style = get_post_meta( get_the_id(), 'vote4me_poll_style', true );
 			}
 			$vote4me_poll_vote_total_count = (int)get_post_meta(get_the_id(), 'vote4me_vote_total_count',true);
-			$vote4me_poll_container_color_primary = get_post_meta( get_the_id(), 'vote4me_poll_container_color_primary', true );?>
+			$vote4me_poll_container_color_primary = get_post_meta( get_the_id(), 'vote4me_poll_container_color_primary', true );
+			?>
 
 			<div class="vote4me_container"<?php if($vote4me_poll_container_color_primary){echo ' style="background: -webkit-linear-gradient(40deg,#eee,<?php echo $vote4me_poll_container_color_primary;?>)!important;
     background: -o-linear-gradient(40deg,#eee,<?php echo $vote4me_poll_container_color_primary;?>)!important;
@@ -68,33 +81,45 @@ if ( $vote4me_post_query->have_posts()) {
 				<ul class="vote4me_surveys <?php if($vote4me_poll_style == 'list') echo 'vote4me_list'; else echo 'vote4me_grid';?>">
 		<?php
 			$i=0;
-			if($vote4me_option_names){
+			if($vote4me_options["names"]){
 
-			foreach($vote4me_option_names as $vote4me_option_name):
-			$vote4me_poll_vote_count = (int)get_post_meta(get_the_id(), 'vote4me_vote_count_'.(float)$vote4me_poll_option_id[$i],true);
-			//print_r($vote4me_poll_option_id[$i]);
-			$vote4me_poll_vote_percentage =0;
-			if($vote4me_poll_vote_count == 0){
-			$vote4me_poll_vote_percentage =0;
-			}else{
-			$vote4me_poll_vote_percentage = (int)$vote4me_poll_vote_count*100/$vote4me_poll_vote_total_count; 
-			}
-			$vote4me_poll_vote_percentage = (int)$vote4me_poll_vote_percentage;
-			?>
+			foreach($vote4me_options["names"] as $vote4me_option_name):
+				$vote4me_poll_vote_count = (int)get_post_meta(
+					get_the_id(),
+					'vote4me_vote_count_'.(float)$vote4me_options['ids'][$i],true);
+				//print_r($vote4me_options['ids'][$i]);
+				$vote4me_poll_vote_percentage =0;
+				if ($vote4me_poll_vote_count == 0){
+					$vote4me_poll_vote_percentage =0;
+				} else {
+					$vote4me_poll_vote_percentage = (int)$vote4me_poll_vote_count*100/$vote4me_poll_vote_total_count; 
+				}
+				$vote4me_poll_vote_percentage = (int)$vote4me_poll_vote_percentage;
+		?>
+
+		<?php
+				if ($vote4me_options['secretaries'][$i] != $vote4me_secretaria_title) {
+					$vote4me_secretaria_title = $vote4me_options['secretaries'][$i];
+					?>
+					<div class="vote4me_secretaria_title"><?php echo $vote4me_secretaria_title;?></div>
+					<?php
+				}
+		?>
+
 		  <li class="vote4me_survey-item">
 			<div class="vote4me_survey-item-inner">
 				<div class="vote4me_big_cover">
-					  <?php if($vote4me_poll_option_cover_img){
-	
-						 	if(isset($vote4me_poll_option_cover_img[$i])){
-							 	echo '<img src="'.$vote4me_poll_option_cover_img[$i].'">';
+					  <?php
+					  	if ($vote4me_options['cover_img']) {
+						 	if (isset($vote4me_options['cover_img'][$i])) {
+							 	echo '<img src="'.$vote4me_options['cover_img'][$i].'">';
 							 }
-					}?>		
+						}?>		
 				</div>
 				
-				<?php if(isset($vote4me_option_imgs[$i])){?>
+				<?php if(isset($vote4me_options['imgs'][$i])){?>
 				<div class="vote4me_survey-country vote4me_grid-only">
-				  <img src="<?php echo $vote4me_option_imgs[$i];?>">
+				  <img src="<?php echo $vote4me_options['imgs'][$i];?>">
 				  <div class="vote4me_spinner">
 				  	<svg version="1.1" id="vote4me_tick" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 				viewBox="0 0 37 37" xml:space="preserve">
@@ -112,17 +137,17 @@ if ( $vote4me_post_query->have_posts()) {
 				  <?php echo $vote4me_option_name;?>
 				</div>
 				<div class="vote4me_survey-territorial">
-				  <?php echo $vote4me_option_territorials[$i];?>
+				  <?php echo $vote4me_options['territorials'][$i];?>
 				</div>
 				<div class="vote4me_survey-secretaria">
-				  <?php echo $vote4me_option_secretaries[$i];?>
+				  <?php echo $vote4me_options['secretaries'][$i];?>
 				</div>
 
-				<div class="vote4me_survey-item-action<?php if(vote4me_check_for_unique_voting(get_the_id(),$vote4me_poll_option_id[$i])) echo ' vote4me_survey-item-action-disabled';?>">
-					<?php if(!vote4me_check_for_unique_voting(get_the_id(),$vote4me_poll_option_id[$i])){?>
+				<div class="vote4me_survey-item-action<?php if (vote4me_check_for_unique_voting(get_the_id(),$vote4me_options['ids'][$i])) echo ' vote4me_survey-item-action-disabled';?>">
+					<?php if(!vote4me_check_for_unique_voting(get_the_id(),$vote4me_options['ids'][$i])){?>
 					<form action="" name="vote4me_survey-item-action-form" class="vote4me_survey-item-action-form">
 						<input type="hidden" name="vote4me_poll-id" id="vote4me_poll-id" value="<?php echo get_the_id();?>">
-						<input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_poll_option_id[$i];?>">
+						<input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_options['ids'][$i];?>">
 						<input type="hidden" name="vote4me_secretaria" id="vote4me_secretaria" value="<?php echo $vote4me_option_secretaries[$i];?>">
 						<input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vota">
 					</form>

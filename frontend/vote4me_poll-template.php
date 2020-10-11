@@ -5,9 +5,9 @@ get_header();
 while ( have_posts() ) : the_post();
 
 			$vote4me_options = array();
-			$vote4me_options["names"] = array();
-			if(get_post_meta( get_the_id(), 'vote4me_poll_option', true )){
-				$vote4me_options["names"] = get_post_meta( get_the_id(), 'vote4me_poll_option', true );
+			$vote4me_options['names'] = array();
+			if (get_post_meta( get_the_id(), 'vote4me_poll_option', true )){
+				$vote4me_options['names'] = get_post_meta( get_the_id(), 'vote4me_poll_option', true );
 			}
 			$vote4me_options['imgs'] = array();
 			$vote4me_options['imgs'] = get_post_meta( get_the_id(), 'vote4me_poll_option_img', true );
