@@ -151,12 +151,12 @@ while ( have_posts() ) : the_post();
             endforeach;
             ?>
             <div class="vote4me_survey-item-action-final">
-                    <form action="" name="vote4me_survey-item-action-form-final" class="vote4me_survey-item-action-form-final">
-                        <input type="hidden" name="vote4me_poll-id-final" id="vote4me_poll-id-final" value="<?php echo get_the_id();?>">
-                        <input type="button" name="vote4me_survey-vote-button-final" id="vote4me_survey-vote-button-final"
-                         class="vote4me_orange_gradient" value="Confirma les votacions!">
-                    </form>
-                    </div>
+            <form action="" name="vote4me_survey-item-action-form-final" class="vote4me_survey-item-action-form-final">
+                <input type="hidden" name="vote4me_poll-id-final" id="vote4me_poll-id-final" value="<?php echo get_the_id();?>">
+                <input type="button" name="vote4me_survey-vote-button-final" id="vote4me_survey-vote-button-final"
+                    class="vote4me_red_gradient" value="Fes clic aquí per confirmar les votacions!">
+            </form>
+            </div>
             <?php
             echo '</ul> <div style="clear:both;"></div>';
         } else {

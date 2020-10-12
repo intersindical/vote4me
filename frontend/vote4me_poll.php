@@ -169,6 +169,16 @@ function vote4me_add_shortcode($atts, $content = null)
                     <?php
                     $i++;
                 endforeach;
+                ?>
+                <div class="vote4me_survey-item-action-final">
+                <form action="" name="vote4me_survey-item-action-form-final" class="vote4me_survey-item-action-form-final">
+                    <input type="hidden" name="vote4me_poll-id-final" id="vote4me_poll-id-final" value="<?php echo get_the_id();?>">
+                    <input type="button" name="vote4me_survey-vote-button-final" id="vote4me_survey-vote-button-final"
+                        class="vote4me_red_gradient" value="Fes clic aquí per confirmar les votacions!">
+                </form>
+                </div>
+
+                <?php
                 echo '</ul> <div style="clear:both;"></div>';
             } else {
                 if (current_user_can('author') || current_user_can('editor') || current_user_can('administrator')) {

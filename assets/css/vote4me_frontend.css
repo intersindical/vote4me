@@ -748,11 +748,11 @@
     outline: 0;
 }
 
-.vote4me_survey-item-action-form {
+.vote4me_survey-item-action-form .vote4me_survey-item-action-form-final {
     width: 100%;
 }
 
-.vote4me_survey-item-action {
+.vote4me_survey-item-action .vote4me_survey-item-action-final {
     width: 100%;
     padding: 8px 0;
     margin: 0px 0 5px;
@@ -1036,6 +1036,12 @@
     animation: vote4me_spin 1.5s linear infinite;
 }
 
+.vote4me_red_gradient {
+    background: -webkit-linear-gradient(50deg, #000000, #fc6262)!important;
+    background: -o-linear-gradient(50deg, #000000, #fc6262)!important;
+    background: linear-gradient(40deg, #000000, #fc6262)!important;
+}
+
 .vote4me_orange_gradient {
     background: -webkit-linear-gradient(50deg, #ffd86f, #fc6262)!important;
     background: -o-linear-gradient(50deg, #ffd86f, #fc6262)!important;
@@ -1131,6 +1137,14 @@
     text-indent: 5px;
 }
 
+#vote4me_survey-vote-button-final {
+    font-size: 15px !important;
+    border: 4px;
+    width: 100%;
+    padding: 2em 2em;
+    border-radius: 8px;
+}
+
 .vote4me_list .vote4me_survey-item {
     margin-bottom: 20px;
 }
@@ -1190,7 +1204,7 @@
 
 .vote4me_secretaria_title {
     background-color: #7f7f7f;
-    color: #FF0F50;
+    color: #ffffff;
     font-size: 24px;
 }
 

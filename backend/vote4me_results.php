@@ -135,10 +135,13 @@
                 Votes in (x/x)
             </th>
             <th>
-                Live Result
+                Sex
             </th>
             <th>
-                Voter Details
+                Territorial
+            </th>
+            <th>
+                Secretaria
             </th>
         </tr>
     </thead>
@@ -160,34 +163,46 @@
         $i=1;
         if ($vote4me_query->have_posts()) {
             while ( $vote4me_query->have_posts() ) {
-                $vote4me_query->the_post();?>
+                $vote4me_query->the_post();
                 
-                <tr>
-                    <td class="has-row-actions column-primary">
-                        <?php the_id();?>
-
-                    </td>
-                    <td>
-                        <?php the_title();?>
-                    </td>
-                    <td>
-                        <?php echo get_post_meta(get_the_id(), 'vote4me_poll_status', true); ?>
-                    </td>
-                <?php 
-
                 $vote4me_options = vote4me_get_options_sorted($poll_id);
 
-                foreach ($vote4me_options as $vote4me_option) {
-                    foreach ($vote4me_option as $option) {
-                        ?><td><?php echo $option; ?></td><?php
-                    }
+                foreach ($vote4me_options as $vote4me_option) {?>
+                    <tr>
+                        <!--
+                    <td class="has-row-actions column-primary">
+                        <?php //the_id();?>
+                    </td>
+                    <td>
+                        <?php //the_title();?>
+                    </td>-->
+                    <?php 
+                    echo "<td>".$vote4me_option['name']."</td>";
+
                     $option_id = $vote4me_option['id'];
                     if (isset($option_id) && get_post_meta($poll_id, 'vote4me_vote_count_'.$option_id, true)) {
                         $vote_count = get_post_meta($poll_id, 'vote4me_vote_count_'.$option_id, true);
-                        ?><td><?php echo $vote_count; ?></td><?php
+                        echo "<td>".$vote_count."</td>";
+                    } else {
+                        echo "<td>0</td>";
                     }
+
+                    // votes in (x/x)
+                    echo "<td></td>";
+
+                    echo "<td>".$vote4me_option['sex']."</td>";
+                    echo "<td>".$vote4me_option['territorial']."</td>";
+                    echo "<td>".$vote4me_option['secretaria']."</td>";
+
+                    ?>
+                    <!--
+                    <td>
+                        <?php //echo get_post_meta(get_the_id(), 'vote4me_poll_status', true); ?>
+                    </td>
+                    -->
+                    </tr>
+                    <?php
                 }
-                ?></tr><?php
             }
         }
         ?>
