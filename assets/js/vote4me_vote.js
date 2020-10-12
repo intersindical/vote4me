@@ -10,8 +10,6 @@ jQuery(document).ready(function() {
 
         jQuery(this).find('#vote4me_survey-vote-button').click(function() {
 
-            var secretaria = this.attr('secretaria');
-
             // vote4me_secretaria
             var secretaria_votada = jQuery(vote4me_item).find('.vote4me_secretaria').val();
 

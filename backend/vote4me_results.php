@@ -1,26 +1,19 @@
 <?php if(isset($_REQUEST['view'])){?>
 <div class="wrap" style="position: relative;">
 <h1>Voting Results <sub style="color:orange">Vote4me</sub></h1>
-<?php if($_REQUEST['view'] == 'voter_details'){?>
-<!--
-<div class="vote4me_system_upgrade_pro">
-    <div class="vote4me_system_upgrade_pro_dotted_line"></div>
-    <div class="dashicons dashicons-unlock vote4me_system_upgrade_pro_icon"></div>
-    <a href="https://infotheme.net/product/epoll-pro/" class="it_edb_submit vote4me_system_upgrade_pro_btn">Upgrade to Pro for all Features</a>
-</div>
--->
+<?php if($_REQUEST['view'] == 'voter_details') {?>
+
 <table class="wp-table widefat fixed striped posts">
     <thead>
         <tr>
             <th>
-                <a href="<?php echo admin_url('admin.php?page=vote4me_system&view=results&id=1');?>" class=""><i class="dashicons dashicons-arrow-left-alt"></i> Go Back</a>
+                <a href="<?php echo admin_url('admin.php?page=vote4me_system&view=results&id=1');?>" class="">
+                <i class="dashicons dashicons-arrow-left-alt"></i>Go Back</a>
             </th>
             <th style="text-align: center;">
-                <a href="<?php echo admin_url('post-new.php?post_type=vote4me_poll');?>" class=""><i class="dashicons dashicons-chart-pie"></i> Create New Poll</a>
+                <a href="<?php echo admin_url('post-new.php?post_type=vote4me_poll');?>" class="">
+                <i class="dashicons dashicons-chart-pie"></i>Create New Poll</a>
             </th>
-            <!--<th style="text-align: right;">
-                <a href="https://infotheme.in/#support" class=""><i class="dashicons dashicons-sos"></i> Get Support</a>
-            </th>-->
         </tr>
     </thead>
 </table>
