@@ -5,7 +5,7 @@ Plugin Uri: https://educacio.intersindical-csc.cat
 Description: Vote plugin based on e-poll by InfoTheme
 Author: Gustau Castells (Intersindical-CSC)
 Author URI: https://educacio.intersindical-csc.cat
-Version: 0.23
+Version: 0.25
 Tags: WordPress poll, responsive poll, create poll, polls, booth, polling, voting, vote, survey, election, options, contest, contest system, poll system, voting, wp voting, question answer, question, q&a, wp poll system, poll plugin, election plugin, survey plugin, wp poll, user poll, user voting, wp poll, add poll, ask question, forum, poll, voting system, wp voting, vote system, posts, pages, widget.
 Text Domain: vote4me
 Licence: GPLv2 or later
@@ -133,7 +133,7 @@ if (!function_exists('vote4me_js_register')) {
         wp_enqueue_style('wp-color-picker');
         wp_enqueue_script('thickbox');
 
-        /*
+        /* DEBUG
         wp_register_script(
             'vote4me_js',
             plugins_url('/assets/js/vote4me.js', __FILE__),
@@ -227,6 +227,7 @@ if (!function_exists('ajax_vote4me_vote')) {
     {
         if (isset($_POST['action']) and $_POST['action'] == 'vote4me_vote') {
             @session_start();
+
             if (isset($_POST['poll_id'])) {
                 $poll_id = intval(sanitize_text_field($_POST['poll_id']));
             }
@@ -250,6 +251,14 @@ if (!function_exists('ajax_vote4me_vote')) {
             }
 
             // TODO: secretaria, sexe, territorial (si és el vot final)
+            $vote4me_options = vote4me_get_options_sorted($poll_id);
+            foreach ($vote4me_options as $options) {
+                if ($options['id'] == $option_id) {
+                    print_r($options);
+                }
+            }
+
+            
 
             $oldest_vote = 0;
             $oldest_total_vote = 0;
@@ -262,7 +271,9 @@ if (!function_exists('ajax_vote4me_vote')) {
                 $oldest_total_vote = get_post_meta($poll_id, 'vote4me_vote_total_count', true);
             }
 
-            if (!vote4me_check_for_unique_voting($poll_id, $option_id)) {
+            // DEBUG
+            //if (!vote4me_check_for_unique_voting($poll_id, $option_id)) {
+            if (true) {
                 $new_total_vote = intval($oldest_total_vote) + 1;
                 $new_vote = (int)$oldest_vote + 1;
                 update_post_meta($poll_id, 'vote4me_vote_count_'.$option_id, $new_vote);
@@ -273,14 +284,52 @@ if (!function_exists('ajax_vote4me_vote')) {
                 $outputdata['total_opt_vote_count'] = $new_vote;
                 $outputdata['option_id'] = $option_id;
                 $outputdata['voting_status'] = "done";
-                $outputdataPercentage = ($new_vote*100)/$new_total_vote;
+                $outputdataPercentage = ($new_vote * 100) / $new_total_vote;
                 $outputdata['total_vote_percentage'] = (int)$outputdataPercentage;
-                $_SESSION['vote4me_session_'.$poll_id] = uniqid();
+                if (!isset($_SESSION['vote4me_session_'.$poll_id])) {
+                    $_SESSION['vote4me_session_'.$poll_id] = uniqid();
+                }
                 
                 print_r(json_encode($outputdata));
             }
         }
         die();
+    }
+}
+
+if (!function_exists('vote4me_get_options_sorted')) {
+    function vote4me_get_options_sorted($poll_id)
+    {
+        $vote4me_options = array();
+        
+        $options = array(
+            array('name', 'vote4me_poll_option'),
+            array('img', 'vote4me_poll_option_img'),
+            array('cover_img', 'vote4me_poll_option_cover_img'),
+            array('sex', 'vote4me_poll_option_sex'),
+            array('territorial', 'vote4me_poll_option_territorial'),
+            array('secretaria', 'vote4me_poll_option_secretaria'),
+            array('id','vote4me_poll_option_id'));
+
+        foreach ($options as $option) {
+            $info = array();
+            $info = get_post_meta($poll_id, $option[1], true);
+            $k = 0;
+            foreach ($info as $item) {
+                $vote4me_options[$k][$option[0]] = $item;
+                $k++;
+            }
+        }
+        // print_r($vote4me_options);
+
+        // Sort by secretaries
+        usort(
+            $vote4me_options, function ($a, $b) {
+                return strcmp($a['secretaria'], $b['secretaria']); 
+            }
+        );
+
+        return $vote4me_options;
     }
 }
 

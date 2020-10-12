@@ -28,34 +28,7 @@ function vote4me_add_shortcode($atts, $content = null)
 
         while ($vote4me_post_query->have_posts() ) : $vote4me_post_query->the_post();
 
-            $vote4me_options = array();
-            
-            $options = array(
-                array('name', 'vote4me_poll_option'),
-                array('img', 'vote4me_poll_option_img'),
-                array('cover_img', 'vote4me_poll_option_cover_img'),
-                array('sex', 'vote4me_poll_option_sex'),
-                array('territorial', 'vote4me_poll_option_territorial'),
-                array('secretaria', 'vote4me_poll_option_secretaria'),
-                array('id','vote4me_poll_option_id'));
-
-            foreach ($options as $option) {
-                $info = array();
-                $info = get_post_meta(get_the_id(), $option[1], true);
-                $k = 0;
-                foreach ($info as $item) {
-                    $vote4me_options[$k][$option[0]] = $item;
-                    $k++;
-                }
-            }
-            // print_r($vote4me_options);
-
-            // Sort by secretaries
-            usort(
-                $vote4me_options, function ($a, $b) {
-                    return strcmp($a['secretaria'], $b['secretaria']); 
-                }
-            );
+            $vote4me_options = vote4me_get_options_sorted(get_the_id());
 
             $vote4me_secretaria_title = "";
 
@@ -154,6 +127,7 @@ function vote4me_add_shortcode($atts, $content = null)
                     </div>
 
                     <?php
+                    // DEBUG
                     //if (vote4me_check_for_unique_voting(get_the_id(), $vote4me_option['id'])) {
                     if (false) {
                         ?>

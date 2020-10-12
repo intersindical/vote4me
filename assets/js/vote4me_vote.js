@@ -3,23 +3,20 @@ jQuery(document).ready(function() {
     // TODO: Finalitzem les votacions
     // jQuery(this).find('#vote4me_survey-vote-button').click(function() {});
 
-
+    // vote4me_survey-item-id = option_id
     // Votem un candidat
     jQuery('.vote4me_survey-item').each(function() {
         var vote4me_item = jQuery(this);
 
         jQuery(this).find('#vote4me_survey-vote-button').click(function() {
-
             // vote4me_secretaria
-            var secretaria_votada = jQuery(vote4me_item).find('.vote4me_secretaria').val();
-            console.log(secretaria_votada);
+            var secretaria_votada = jQuery(vote4me_item).find('#vote4me_secretaria').val();
+            console.log("Secretaria votada:" + secretaria_votada);
 
             jQuery(vote4me_item).parent().find('.vote4me_survey-item').each(function() {
                 // Deshabilitar els butons dels candidats a la mateixa secretaria
-
                 var secretaria = jQuery(this).find('#vote4me_secretaria').val();
-                console.log(secretaria);
-
+                console.log("Secretaria:" + secretaria);
                 if (secretaria_votada == secretaria) {
                     var voteBtn = jQuery(this).find('#vote4me_survey-vote-button');
                     voteBtn.val('...');
@@ -40,11 +37,14 @@ jQuery(document).ready(function() {
             // We can also pass the url value separately from ajaxurl for front end AJAX implementations
             jQuery.post(vote4me_ajax_obj.ajax_url, data, function(response) {
 
+                console.log(response);
+
                 var vote4me_json = jQuery.parseJSON(response);
 
-                jQuery(vote4me_item).parent().find('.vote4me_survey-item').each(function() {
-                    jQuery(this).find('#vote4me_survey-vote-button').addClass('vote4me_scale_hide');
-                });
+                // Amaga els botons
+                //jQuery(vote4me_item).parent().find('.vote4me_survey-item').each(function() {
+                //    jQuery(this).find('#vote4me_survey-vote-button').addClass('vote4me_scale_hide');
+                //});
 
                 jQuery(vote4me_item).find('.vote4me_survey-progress-fg').attr('style', 'width:' + vote4me_json.total_vote_percentage + '%');
                 jQuery(vote4me_item).find('.vote4me_survey-progress-label').text(vote4me_json.total_vote_percentage + '%');
@@ -52,7 +52,7 @@ jQuery(document).ready(function() {
 
                 setTimeout(function() {
                     jQuery(vote4me_btn).addClass('vote4me_scale_show');
-                    jQuery(vote4me_btn).val("Voted");
+                    jQuery(vote4me_btn).val("Votat!");
                     jQuery(vote4me_btn).toggleClass("vote4me_green_gradient");
                     jQuery(vote4me_item).find('.vote4me_spinner').toggleClass("vote4me_spinner_stop");
                     jQuery(vote4me_item).find('.vote4me_spinner').toggleClass("vote4me_drawn");

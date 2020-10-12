@@ -8,35 +8,7 @@ get_header();
 
 while ( have_posts() ) : the_post();
 
-    $vote4me_options = array();
-
-    $options = array(
-        array('name', 'vote4me_poll_option'),
-        array('img', 'vote4me_poll_option_img'),
-        array('cover_img', 'vote4me_poll_option_cover_img'),
-        array('sex', 'vote4me_poll_option_sex'),
-        array('territorial', 'vote4me_poll_option_territorial'),
-        array('secretaria', 'vote4me_poll_option_secretaria'),
-        array('id','vote4me_poll_option_id'));
-
-    foreach ($options as $option) {
-        $info = array();
-        $info = get_post_meta(get_the_id(), $option[1], true);
-        $k = 0;
-        foreach ($info as $item) {
-            $vote4me_options[$k][$option[0]] = $item;
-            $k++;
-        }
-    }
-
-    // print_r($vote4me_options);
-
-    // Sort by secretaries
-    usort(
-        $vote4me_options, function ($a, $b) {
-            return strcmp($a['secretaria'], $b['secretaria']);
-        }
-    );
+    $vote4me_options = vote4me_get_options_sorted(get_the_id());
 
     // Common poll parameters
     $vote4me_poll_status = get_post_meta(get_the_id(), 'vote4me_poll_status', true);
@@ -132,12 +104,13 @@ while ( have_posts() ) : the_post();
                 </div>
 
                 <?php
+                // DEBUG
                 // if (vote4me_check_for_unique_voting(get_the_id(), $vote4me_option['id'])) {
                 if (false) {
                     ?>
                     <div class="vote4me_survey-item-action vote4me_survey-item-action-disabled"></div>
                     <span style="border-top:1px solid #ccc;border-bottom:1px solid #ccc; padding:0px; margin:5px; display:inline-block; color: #fc6462;">
-                        You Already Participated!
+                        Ja has votat!
                     </span>
                     <?php
                 } else { ?>
@@ -154,13 +127,16 @@ while ( have_posts() ) : the_post();
                 <div class="vote4me_pull-right">
                     <span class="vote4me_survey-progress">
                         <span class="vote4me_survey-progress-bg">
-                            <span class="vote4me_survey-progress-fg vote4me_orange_gradient" style="width:<?php echo $vote4me_poll_vote_percentage;?>%;"></span>
+                            <span class="vote4me_survey-progress-fg vote4me_orange_gradient"
+                             style="width:<?php echo $vote4me_poll_vote_percentage;?>%;"></span>
                         </span>
                         <span class="vote4me_survey-progress-labels">
                             <span class="vote4me_survey-progress-label">
                                 <?php echo $vote4me_poll_vote_percentage;?>%
                             </span>
-                            <input type="hidden" name="vote4me_poll_e_vote_count" id="vote4me_poll_e_vote_count" value="<?php echo $vote4me_poll_vote_count;?>"/>
+                            <input type="hidden" name="vote4me_poll_e_vote_count"
+                             id="vote4me_poll_e_vote_count"
+                             value="<?php echo $vote4me_poll_vote_count;?>"/>
                             <span class="vote4me_survey-completes">
                                 <?php echo vote4me_number_shorten($vote4me_poll_vote_count)." / ".vote4me_number_shorten($vote4me_poll_vote_total_count);?>
                             </span>
@@ -173,6 +149,15 @@ while ( have_posts() ) : the_post();
                 <?php
                 $i++;
             endforeach;
+            ?>
+            <div class="vote4me_survey-item-action-final">
+                    <form action="" name="vote4me_survey-item-action-form-final" class="vote4me_survey-item-action-form-final">
+                        <input type="hidden" name="vote4me_poll-id-final" id="vote4me_poll-id-final" value="<?php echo get_the_id();?>">
+                        <input type="button" name="vote4me_survey-vote-button-final" id="vote4me_survey-vote-button-final"
+                         class="vote4me_orange_gradient" value="Confirma les votacions!">
+                    </form>
+                    </div>
+            <?php
             echo '</ul> <div style="clear:both;"></div>';
         } else {
             if (current_user_can('author') || current_user_can('editor') || current_user_can('administrator')) {

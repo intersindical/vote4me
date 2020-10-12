@@ -292,16 +292,16 @@ function vote4me_save_options( $post_id )
     
     
     //Update Poll Options Name
-    if (isset($_POST['vote4me_poll_option'])){
+    if (isset($_POST['vote4me_poll_option'])) {
         $vote4me_poll_options = $_POST['vote4me_poll_option'];
         $vote4me_poll_option = array();
-        foreach($vote4me_poll_options as $vote4me_poll_opt_key){
-            if($vote4me_poll_opt_key){
-            array_push($vote4me_poll_option,sanitize_text_field($vote4me_poll_opt_key));
+        foreach ($vote4me_poll_options as $vote4me_poll_opt_key) {
+            if ($vote4me_poll_opt_key) {
+                array_push($vote4me_poll_option, sanitize_text_field($vote4me_poll_opt_key));
             }
         }
         update_post_meta( $post_id, 'vote4me_poll_option', $vote4me_poll_option );
-    }else{
+    } else {
         update_post_meta( $post_id, 'vote4me_poll_option', array());
         update_post_meta( $post_id, 'vote4me_poll_option_img', array());
         update_post_meta( $post_id, 'vote4me_poll_option_cover_img', array());
@@ -312,12 +312,12 @@ function vote4me_save_options( $post_id )
     }
     
     //Update Poll Options Image
-    if(isset($_POST['vote4me_poll_option_img'])){
+    if (isset($_POST['vote4me_poll_option_img'])) {
         $vote4me_poll_option_imgs = $_POST['vote4me_poll_option_img'];
         $vote4me_poll_option_img = array();
-        foreach($vote4me_poll_option_imgs as $vote4me_poll_option_img_key){
-            if($vote4me_poll_option_img_key){
-            array_push($vote4me_poll_option_img,sanitize_text_field($vote4me_poll_option_img_key));
+        foreach ($vote4me_poll_option_imgs as $vote4me_poll_option_img_key){
+            if ($vote4me_poll_option_img_key) {
+            array_push($vote4me_poll_option_img, sanitize_text_field($vote4me_poll_option_img_key));
             }
         }
         update_post_meta( $post_id, 'vote4me_poll_option_img', $vote4me_poll_option_img );
@@ -358,33 +358,33 @@ function vote4me_save_options( $post_id )
             array_push($vote4me_poll_option_territorial,sanitize_text_field($vote4me_poll_option_territorial_key));
             }
         }
-        update_post_meta( $post_id, 'vote4me_poll_option_territorial', $vote4me_poll_option_territorial );
+        update_post_meta($post_id, 'vote4me_poll_option_territorial', $vote4me_poll_option_territorial);
     }
 
     //Update Poll Options Secretaria
-    if(isset($_POST['vote4me_poll_option_secretaria'])){
+    if (isset($_POST['vote4me_poll_option_secretaria'])) {
         print_r($_POST['vote4me_poll_option_secretaria']);
         $vote4me_poll_option_secretaries = $_POST['vote4me_poll_option_secretaria'];
         $vote4me_poll_option_secretaria = array();
-        foreach($vote4me_poll_option_secretaries as $vote4me_poll_option_secretaria_key){
-            if($vote4me_poll_option_secretaria_key){
-            array_push($vote4me_poll_option_secretaria,sanitize_text_field($vote4me_poll_option_secretaria_key));
+        foreach ($vote4me_poll_option_secretaries as $vote4me_poll_option_secretaria_key) {
+            if ($vote4me_poll_option_secretaria_key) {
+                array_push($vote4me_poll_option_secretaria, sanitize_text_field($vote4me_poll_option_secretaria_key));
             }
         }
-        update_post_meta( $post_id, 'vote4me_poll_option_secretaria', $vote4me_poll_option_secretaria );
+        update_post_meta($post_id, 'vote4me_poll_option_secretaria', $vote4me_poll_option_secretaria);
     }
 
 
     //Update Poll Options Id
-    if(isset($_POST['vote4me_poll_option_id'])){
+    if (isset($_POST['vote4me_poll_option_id'])) {
         $vote4me_poll_option_ids = $_POST['vote4me_poll_option_id'];
         $vote4me_poll_option_id = array();
-        foreach($vote4me_poll_option_ids as $vote4me_poll_option_id_key){
-            if($vote4me_poll_option_id_key){
-            array_push($vote4me_poll_option_id,sanitize_text_field($vote4me_poll_option_id_key));
+        foreach ($vote4me_poll_option_ids as $vote4me_poll_option_id_key) {
+            if ($vote4me_poll_option_id_key) {
+                array_push($vote4me_poll_option_id, sanitize_text_field($vote4me_poll_option_id_key));
             }
         }
-        update_post_meta( $post_id, 'vote4me_poll_option_id', $vote4me_poll_option_id );
+        update_post_meta($post_id, 'vote4me_poll_option_id', $vote4me_poll_option_id);
     }
 }
 add_action( 'save_post', 'vote4me_save_options' );

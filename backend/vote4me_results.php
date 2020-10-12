@@ -1,4 +1,4 @@
-<?php if(isset($_REQUEST['view'])){?>
+<?php if (isset($_REQUEST['view'])) {?>
 <div class="wrap" style="position: relative;">
 <h1>Voting Results <sub style="color:orange">Vote4me</sub></h1>
 <?php if($_REQUEST['view'] == 'voter_details') {?>
@@ -107,12 +107,7 @@
         </tr>
     </tbody>
 </table>
-<?php }else{?>
-<!--<div class="vote4me_system_upgrade_pro">
-    <div class="vote4me_system_upgrade_pro_dotted_line"></div>
-    <div class="dashicons dashicons-unlock vote4me_system_upgrade_pro_icon"></div>
-    <a href="https://infotheme.net/product/epoll-pro/" class="it_edb_submit vote4me_system_upgrade_pro_btn">Upgrade to Pro for all Features</a>
-</div>-->
+<?php } else {?>
 <table class="wp-list-table widefat fixed striped posts">
     <thead>
         <tr>
@@ -123,7 +118,6 @@
                 <a href="<?php echo admin_url('post-new.php?post_type=vote4me_poll');?>" class=""><i class="dashicons dashicons-chart-pie"></i> Create New Poll</a>
             </th>
             <th style="text-align: right;">
-                <!--<a href="https://infotheme.in" class=""><i class="dashicons dashicons-sos"></i> Get Support</a>-->
             </th>
         </tr>
     </thead>
@@ -132,7 +126,7 @@
     <thead>
         <tr>
             <th>
-                Canidate / Option Name
+                Candidate / Option Name
             </th>
             <th>
                 Total Votes
@@ -147,7 +141,58 @@
                 Voter Details
             </th>
         </tr>
+    </thead>
+    <tbody>
+        <?php
+        $poll_id = $_REQUEST['id'];
 
+        // WP_Query arguments
+        $vote4me_queryargs = array(
+            'post_type'              => array( 'vote4me_poll' ),
+            'post_status'            => array( 'publish' ),
+            'post_id'                => $poll_id,
+        );
+
+        // The Query
+        $vote4me_query = new WP_Query( $vote4me_queryargs );
+
+        // The Loop
+        $i=1;
+        if ($vote4me_query->have_posts()) {
+            while ( $vote4me_query->have_posts() ) {
+                $vote4me_query->the_post();?>
+                
+                <tr>
+                    <td class="has-row-actions column-primary">
+                        <?php the_id();?>
+
+                    </td>
+                    <td>
+                        <?php the_title();?>
+                    </td>
+                    <td>
+                        <?php echo get_post_meta(get_the_id(), 'vote4me_poll_status', true); ?>
+                    </td>
+                <?php 
+
+                $vote4me_options = vote4me_get_options_sorted($poll_id);
+
+                foreach ($vote4me_options as $vote4me_option) {
+                    foreach ($vote4me_option as $option) {
+                        ?><td><?php echo $option; ?></td><?php
+                    }
+                    $option_id = $vote4me_option['id'];
+                    if (isset($option_id) && get_post_meta($poll_id, 'vote4me_vote_count_'.$option_id, true)) {
+                        $vote_count = get_post_meta($poll_id, 'vote4me_vote_count_'.$option_id, true);
+                        ?><td><?php echo $vote_count; ?></td><?php
+                    }
+                }
+                ?></tr><?php
+            }
+        }
+        ?>
+        </tbody>
+        <!--
         <tr>
             <th>
                 Option 1
@@ -159,19 +204,20 @@
                 20/60
             </th>
             <th>
-                <span style="color:green;font-weight: bold;">Winner</span> <sup style="background: #F44336;
-    border-radius: 4px;
-    padding: 0;
-    width: 32px;
-    text-align: center;
-    display: inline-block;
-    color: #fff;;">Now</sup>
+                <span style="color:green;font-weight: bold;">Winner</span>
+                <sup style="background: #F44336;
+                    border-radius: 4px;
+                    padding: 0;
+                    width: 32px;
+                    text-align: center;
+                    display: inline-block;
+                    color: #fff;;">Now</sup>
             </th>
             <th>
-                <a href="<?php echo admin_url('admin.php?page=vote4me_system&view=voter_details&id='.get_the_id());?>" class="button button-secondary">View</a>		
+                <a href="<?php //echo admin_url('admin.php?page=vote4me_system&view=voter_details&id='.get_the_id());?>" class="button button-secondary">View</a>		
             </th>
         </tr>
-        <tr class="vote4me_system_upgrade_pro_blur">
+        <tr>
             <th>
                 Option 1
             </th>
@@ -182,19 +228,20 @@
                 10/60
             </th>
             <th>
-                <span style="color:orange;font-weight: bold;">Leading</span> <sup style="background: #F44336;
-    border-radius: 4px;
-    padding: 0;
-    width: 32px;
-    text-align: center;
-    display: inline-block;
-    color: #fff;;">Now</sup>
+                <span style="color:orange;font-weight: bold;">Leading</span>
+                <sup style="background: #F44336;
+                    border-radius: 4px;
+                    padding: 0;
+                    width: 32px;
+                    text-align: center;
+                    display: inline-block;
+                    color: #fff;;">Now</sup>
             </th>
             <th>
-                <a href="<?php echo admin_url('admin.php?page=vote4me_system&view=voter_details&id='.get_the_id());?>" class="button button-secondary">View</a>		
+                <a href="<?php //echo admin_url('admin.php?page=vote4me_system&view=voter_details&id='.get_the_id());?>" class="button button-secondary">View</a>		
             </th>
         </tr>
-        <tr  class="vote4me_system_upgrade_pro_blur">
+        <tr>
             <th>
                 Option 1
             </th>
@@ -218,6 +265,7 @@
             </th>
         </tr>
     </thead>
+    -->
 </table>
 <?php }?>
 <?php } else {?>
