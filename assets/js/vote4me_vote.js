@@ -12,11 +12,14 @@ jQuery(document).ready(function() {
 
             // vote4me_secretaria
             var secretaria_votada = jQuery(vote4me_item).find('.vote4me_secretaria').val();
+            console.log(secretaria_votada);
 
             jQuery(vote4me_item).parent().find('.vote4me_survey-item').each(function() {
                 // Deshabilitar els butons dels candidats a la mateixa secretaria
 
                 var secretaria = jQuery(this).find('#vote4me_secretaria').val();
+                console.log(secretaria);
+
                 if (secretaria_votada == secretaria) {
                     var voteBtn = jQuery(this).find('#vote4me_survey-vote-button');
                     voteBtn.val('...');

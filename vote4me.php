@@ -3,9 +3,9 @@
 Plugin Name: vote4me
 Plugin Uri: https://educacio.intersindical-csc.cat
 Description: Vote plugin based on e-poll by InfoTheme
-Author: Gustau Castells
+Author: Gustau Castells (Intersindical-CSC)
 Author URI: https://educacio.intersindical-csc.cat
-Version: 0.19
+Version: 0.23
 Tags: WordPress poll, responsive poll, create poll, polls, booth, polling, voting, vote, survey, election, options, contest, contest system, poll system, voting, wp voting, question answer, question, q&a, wp poll system, poll plugin, election plugin, survey plugin, wp poll, user poll, user voting, wp poll, add poll, ask question, forum, poll, voting system, wp voting, vote system, posts, pages, widget.
 Text Domain: vote4me
 Licence: GPLv2 or later
@@ -132,12 +132,19 @@ if (!function_exists('vote4me_js_register')) {
         wp_enqueue_script('media-upload');
         wp_enqueue_style('wp-color-picker');
         wp_enqueue_script('thickbox');
+
+        /*
         wp_register_script(
             'vote4me_js',
             plugins_url('/assets/js/vote4me.js', __FILE__),
             array('jquery','media-upload','wp-color-picker','thickbox')
         );
-
+        */
+        wp_register_script(
+            'vote4me_js',
+            plugins_url('/assets/js/vote4me.js?v='.time(), __FILE__),
+            array('jquery','media-upload','wp-color-picker','thickbox')
+        );
         wp_enqueue_script('vote4me_js');
 
         wp_register_script(

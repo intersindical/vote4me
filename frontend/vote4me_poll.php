@@ -154,7 +154,8 @@ function vote4me_add_shortcode($atts, $content = null)
                     </div>
 
                     <?php
-                    if (vote4me_check_for_unique_voting(get_the_id(), $vote4me_option['id'])) {
+                    //if (vote4me_check_for_unique_voting(get_the_id(), $vote4me_option['id'])) {
+                    if (false) {
                         ?>
                         <div class="vote4me_survey-item-action vote4me_survey-item-action-disabled"></div>
                         <span style="border-top:1px solid #ccc;border-bottom:1px solid #ccc; padding:0px; margin:5px; display:inline-block; color: #fc6462;">
