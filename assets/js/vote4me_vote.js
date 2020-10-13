@@ -10,8 +10,9 @@ jQuery(document).ready(function() {
 
         jQuery(this).find('#vote4me_survey-vote-button').click(function() {
 
-            var voting_code = jQuery(this).find('#vote4me_voting_code').val();
-            if (voting_code.length <= 0) {
+            var voting_code = jQuery(document).find('#vote4me_voting_code').val();
+            console.log("voting_code: " + voting_code);
+            if (voting_code == "") {
                 alert("Has d'entrar el codi de votació!")
                 return;
             }
