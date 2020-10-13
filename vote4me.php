@@ -5,7 +5,7 @@ Plugin Uri: https://educacio.intersindical-csc.cat
 Description: Vote plugin based on e-poll by InfoTheme
 Author: Gustau Castells (Intersindical-CSC)
 Author URI: https://educacio.intersindical-csc.cat
-Version: 0.1.44
+Version: 0.1.47
 Tags: WordPress poll, responsive poll, create poll, polls, booth, polling, voting, vote, survey, election, options, contest, contest system, poll system, voting, wp voting, question answer, question, q&a, wp poll system, poll plugin, election plugin, survey plugin, wp poll, user poll, user voting, wp poll, add poll, ask question, forum, poll, voting system, wp voting, vote system, posts, pages, widget.
 Text Domain: vote4me
 Licence: GPLv2 or later
@@ -244,6 +244,10 @@ if (!function_exists('ajax_vote4me_vote')) {
                 $option_id = (float) sanitize_text_field($_POST['option_id']);
             }
 
+            if (isset($_POST['voting_code'])) {
+                $voting_code = (float) sanitize_text_field($_POST['voting_code']);
+            }
+
             // Validate Poll ID
             if (!$poll_id) {
                 $poll_id = '';
@@ -258,13 +262,31 @@ if (!function_exists('ajax_vote4me_vote')) {
                 die(json_encode(array("voting_status"=>"error","msg"=>"Fields are required")));
             }
 
-            // TODO: secretaria, sexe, territorial (si és el vot final)
-            //$vote4me_options = vote4me_get_options_sorted($poll_id);
-            //foreach ($vote4me_options as $options) {
-            //    if ($options['id'] == $option_id) {
-            //        print_r($options);
-            //    }
-            //}
+            if (get_post_meta($poll_id, 'vote4me_voting_codes_available')) {
+                $voting_codes_available = get_post_meta($poll_id, 'vote4me_voting_codes_available', true);
+            }
+
+            if (get_post_meta($poll_id, 'vote4me_voting_codes_used')) {
+                $voting_codes_used = get_post_meta($poll_id, 'vote4me_voting_codes_used', true);
+            }
+
+            // Validate voting code
+            $voting_code_is_ok = false;
+
+            if (!$voting_code) {
+                $voting_code = '';
+                $_SESSION['vote4me_session'] = uniqid();
+            } else {
+                $key = array_search($voting_code, $voting_codes_available);
+                if ($key !== false) {
+                    // La clau està a la llista de claus 'disponibles'
+                    $voting_code_is_ok = true;
+                }
+            }
+
+            if (!$voting_code_is_ok) {
+                die(json_encode(array("voting_status"=>"error","msg"=>"Fields are required")));
+            }
 
             $oldest_vote = 0;
             $oldest_total_vote = 0;
@@ -277,109 +299,86 @@ if (!function_exists('ajax_vote4me_vote')) {
                 $oldest_total_vote = get_post_meta($poll_id, 'vote4me_vote_total_count', true);
             }
 
-            // DEBUG
-            //if (!vote4me_check_for_unique_voting($poll_id, $option_id)) {
-            if (true) {
-                $new_total_vote = intval($oldest_total_vote) + 1;
-                $new_vote = (int)$oldest_vote + 1;
-                update_post_meta($poll_id, 'vote4me_vote_count_'.$option_id, $new_vote);
-                update_post_meta($poll_id, 'vote4me_vote_total_count', $new_total_vote);
+            if ($option_id == -1) {
+                // TODO: Confirmació finalització. Comprovar secretaria, sexe, territorial
+                //$vote4me_options = vote4me_get_options_sorted($poll_id);
+                //foreach ($vote4me_options as $options) {
+                //    if ($options['id'] == $option_id) {
+                //        print_r($options);
+                //    }
+                //}
 
-                $outputdata = array();
-                $outputdata['total_vote_count'] = $new_total_vote;
-                $outputdata['total_opt_vote_count'] = $new_vote;
-                $outputdata['option_id'] = $option_id;
-                $outputdata['voting_status'] = "done";
-                $outputdataPercentage = ($new_vote * 100) / $new_total_vote;
-                $outputdata['total_vote_percentage'] = (int)$outputdataPercentage;
-                if (!isset($_SESSION['vote4me_session_'.$poll_id])) {
-                    $_SESSION['vote4me_session_'.$poll_id] = uniqid();
-                }
                 
-                print_r(json_encode($outputdata));
+
+
+                $all_restrictions_ok = false;
+
+                if ($all_restrictions_ok) {
+                    // L'usuari està confirmant la votació
+                    // i les restriccions estan bé,
+                    // treiem la clau de la llista
+                    // de disponibles i la posem a la d'usades
+                    unset($voting_codes_available[$key]);
+                    array_push($voting_codes_used, $voting_code);
+                    update_post_meta(
+                        $poll_id,
+                        'vote4me_voting_codes_available',
+                        $voting_codes_available
+                    );
+                    update_post_meta(
+                        $poll_id,
+                        'vote4me_voting_codes_used',
+                        $voting_codes_used
+                    );
+                }
+            }
+            else {
+
+                if (!isset($_SESSION['vote4me_session_'.$poll_id.$voting_code])) {
+                    $_SESSION['vote4me_session_'.$poll_id.$voting_code] = uniqid();
+                }
+
+                // DEBUG
+                //if (!vote4me_check_for_unique_voting($poll_id, $voting_code, $option_id)) {
+                if (true) {
+                    $new_total_vote = intval($oldest_total_vote) + 1;
+                    $new_vote = (int)$oldest_vote + 1;
+                    update_post_meta($poll_id, 'vote4me_vote_count_'.$option_id, $new_vote);
+                    update_post_meta($poll_id, 'vote4me_vote_total_count', $new_total_vote);
+
+                    $outputdata = array();
+                    $outputdata['total_vote_count'] = $new_total_vote;
+                    $outputdata['total_opt_vote_count'] = $new_vote;
+                    $outputdata['option_id'] = $option_id;
+                    $outputdata['voting_status'] = "done";
+                    $outputdataPercentage = ($new_vote * 100) / $new_total_vote;
+                    $outputdata['total_vote_percentage'] = (int)$outputdataPercentage;
+                    
+                    print_r(json_encode($outputdata));
+                }
             }
         }
         die();
     }
 }
-/*
-if (!function_exists('ajax_vote4me_vote')) {
 
-    add_action('wp_ajax_vote4me_vote', 'ajax_vote4me_vote');
-    add_action('wp_ajax_nopriv_vote4me_vote', 'ajax_vote4me_vote');
-
-    function ajax_vote4me_vote()
+// Si retorna true vol dir que ja ha votat
+if (!function_exists('vote4me_check_for_unique_voting')) {
+    function vote4me_check_for_unique_voting($poll_id, $voting_code, $option_id)
     {
-        if (isset($_POST['action']) and $_POST['action'] == 'vote4me_vote') {
-            @session_start();
-
-            if (isset($_POST['poll_id'])) {
-                $poll_id = intval(sanitize_text_field($_POST['poll_id']));
-            }
-
-            if (isset($_POST['option_id'])) {
-                $option_id = (float) sanitize_text_field($_POST['option_id']);
-            }
-
-            // Validate Poll ID
-            if (!$poll_id) {
-                $poll_id = '';
-                $_SESSION['vote4me_session'] = uniqid();
-                die(json_encode(array("voting_status"=>"error","msg"=>"Fields are required")));
-            }
-
-            // Validate Option ID
-            if (!$option_id) {
-                $option_id = '';
-                $_SESSION['vote4me_session'] = uniqid();
-                die(json_encode(array("voting_status"=>"error","msg"=>"Fields are required")));
-            }
-
-            // TODO: secretaria, sexe, territorial (si és el vot final)
-            //$vote4me_options = vote4me_get_options_sorted($poll_id);
-            //foreach ($vote4me_options as $options) {
-            //    if ($options['id'] == $option_id) {
-            //        print_r($options);
-            //    }
-            //}
-
-            $oldest_vote = 0;
-            $oldest_total_vote = 0;
-            
-            if (get_post_meta($poll_id, 'vote4me_vote_count_'.$option_id, true)) {
-                $oldest_vote = get_post_meta($poll_id, 'vote4me_vote_count_'.$option_id, true);
-            }
-
-            if (get_post_meta($poll_id, 'vote4me_vote_total_count')) {
-                $oldest_total_vote = get_post_meta($poll_id, 'vote4me_vote_total_count', true);
-            }
-
-            // DEBUG
-            //if (!vote4me_check_for_unique_voting($poll_id, $option_id)) {
-            if (true) {
-                $new_total_vote = intval($oldest_total_vote) + 1;
-                $new_vote = (int)$oldest_vote + 1;
-                update_post_meta($poll_id, 'vote4me_vote_count_'.$option_id, $new_vote);
-                update_post_meta($poll_id, 'vote4me_vote_total_count', $new_total_vote);
-
-                $outputdata = array();
-                $outputdata['total_vote_count'] = $new_total_vote;
-                $outputdata['total_opt_vote_count'] = $new_vote;
-                $outputdata['option_id'] = $option_id;
-                $outputdata['voting_status'] = "done";
-                $outputdataPercentage = ($new_vote * 100) / $new_total_vote;
-                $outputdata['total_vote_percentage'] = (int)$outputdataPercentage;
-                if (!isset($_SESSION['vote4me_session_'.$poll_id])) {
-                    $_SESSION['vote4me_session_'.$poll_id] = uniqid();
-                }
-                
-                print_r(json_encode($outputdata));
-            }
+        if (isset($_SESSION['vote4me_session_'.$poll_id])) {
+            return true;
+        } else {
+            return false;
         }
-        die();
+                
+        if (isset($_SESSION['vote4me_session'])) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
-*/
 
 if (!function_exists('vote4me_get_options_sorted')) {
     function vote4me_get_options_sorted($poll_id)
@@ -511,23 +510,6 @@ if (!function_exists('vote4me_number_shorten')) {
 
         }
         return $num;
-    }
-}
-
-if (!function_exists('vote4me_check_for_unique_voting')) {
-    function vote4me_check_for_unique_voting($poll_id,$option_id)
-    {
-        if (isset($_SESSION['vote4me_session_'.$poll_id])) {
-            return true;
-        } else {
-            return false;
-        }
-                
-        if (isset($_SESSION['vote4me_session'])) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }
 

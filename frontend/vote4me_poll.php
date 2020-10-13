@@ -41,6 +41,9 @@ function vote4me_add_shortcode($atts, $content = null)
             }
             $vote4me_poll_vote_total_count = (int)get_post_meta(get_the_id(), 'vote4me_vote_total_count', true);
             $vote4me_poll_container_color_primary = get_post_meta(get_the_id(), 'vote4me_poll_container_color_primary', true);
+
+            $vote4me_voting_codes_available = get_post_meta(get_the_id(), 'vote4me_voting_codes_available', true);
+            $vote4me_voting_codes_used = get_post_meta(get_the_id(), 'vote4me_voting_codes_used', true);
             ?>
 
             <div class="vote4me_container"
@@ -152,21 +155,11 @@ function vote4me_add_shortcode($atts, $content = null)
                         </form>
                         </div>
                     <?php } ?>
-
+                
                 <div class="vote4me_pull-right">
                     <span class="vote4me_survey-progress">
-                        <span class="vote4me_survey-progress-bg">
-                            <span class="vote4me_survey-progress-fg vote4me_orange_gradient" style="width:<?php echo $vote4me_poll_vote_percentage;?>%;"></span>
-                        </span>
-
                         <span class="vote4me_survey-progress-labels">
-                            <span class="vote4me_survey-progress-label">
-                                <?php echo $vote4me_poll_vote_percentage;?>%
-                            </span>
                             <input type="hidden" name="vote4me_poll_e_vote_count" id="vote4me_poll_e_vote_count" value="<?php echo $vote4me_poll_vote_count; ?>"/>
-                            <span class="vote4me_survey-completes">
-                                <?php echo vote4me_number_shorten($vote4me_poll_vote_count)." / ".vote4me_number_shorten($vote4me_poll_vote_total_count); ?>
-                            </span>
                         </span>
                     </span>
                 </div>
@@ -179,7 +172,7 @@ function vote4me_add_shortcode($atts, $content = null)
                 <br><hr><br>
                 <div class="vote4me_survey-item-action-final">
                 <form action="" name="vote4me_survey-item-action-form-final" class="vote4me_survey-item-action-form-final">
-                    <input type="hidden" name="vote4me_poll-id-final" id="vote4me_poll-id-final" value="<?php echo get_the_id();?>">
+                    <input type="hidden" name="vote4me_poll-id" id="vote4me_poll-id" value="<?php echo get_the_id();?>">
                     <input type="button" name="vote4me_survey-vote-button-final" id="vote4me_survey-vote-button-final"
                         class="vote4me_red_gradient" value="Entra el codi de votació i fes clic aquí per confirmar les votacions!">
                 </form>
