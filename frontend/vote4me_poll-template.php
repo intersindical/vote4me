@@ -18,9 +18,9 @@ while ( have_posts() ) : the_post();
     
     $vote4me_secretaria_title = "";
     ?>
-            
             <div class="vote4me_container"
-            <?php if ($vote4me_poll_container_color_primary) {
+            <?php
+            if ($vote4me_poll_container_color_primary) {
                 echo ' style="background: -webkit-linear-gradient(40deg,#eee,<?php echo $vote4me_poll_container_color_primary;?>)!important;
                 background: -o-linear-gradient(40deg,#eee,<?php echo $vote4me_poll_container_color_primary;?>)!important;
                 background: linear-gradient(40deg,#eee,<?php echo $vote4me_poll_container_color_primary;?>)!important;"';
@@ -33,6 +33,12 @@ while ( have_posts() ) : the_post();
             </span>
             </h1>
             <div class="vote4me_inner">
+
+            <div class="vote4me_voting_code_box">
+            <span class="vote4me_voting_code_label">Codi de votació:</span>
+            <input type="text" name="vote4me_voting_code" id="vote4me_voting_code">
+            </div>
+
             <ul class="vote4me_surveys <?php if($vote4me_poll_style == 'list') echo 'vote4me_list'; else echo 'vote4me_grid';?>">
         <?php
         $i=0;
@@ -150,11 +156,12 @@ while ( have_posts() ) : the_post();
                 $i++;
             endforeach;
             ?>
+            <br><hr><br>
             <div class="vote4me_survey-item-action-final">
             <form action="" name="vote4me_survey-item-action-form-final" class="vote4me_survey-item-action-form-final">
                 <input type="hidden" name="vote4me_poll-id-final" id="vote4me_poll-id-final" value="<?php echo get_the_id();?>">
                 <input type="button" name="vote4me_survey-vote-button-final" id="vote4me_survey-vote-button-final"
-                    class="vote4me_red_gradient" value="Fes clic aquí per confirmar les votacions!">
+                    class="vote4me_red_gradient" value="Entra el codi de votació i fes clic aquí per confirmar les votacions!">
             </form>
             </div>
             <?php

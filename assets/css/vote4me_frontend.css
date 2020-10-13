@@ -1208,6 +1208,22 @@
     font-size: 24px;
 }
 
+#vote4me_voting_code {
+    margin: 10 auto; 
+    width:400px;
+    text-align: center;
+    
+}
+
+.vote4me_voting_code_label {
+    text-align: right;
+    font-size: 18px;
+    color: white;
+}
+
+.vote4me_voting_code_box {
+    display: inline-block;
+}
 
 /* Fix intersindical theme part */
 

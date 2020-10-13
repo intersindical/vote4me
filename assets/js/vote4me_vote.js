@@ -9,6 +9,13 @@ jQuery(document).ready(function() {
         var vote4me_item = jQuery(this);
 
         jQuery(this).find('#vote4me_survey-vote-button').click(function() {
+
+            var voting_code = jQuery(this).find('#vote4me_voting_code').val();
+            if (voting_code.length <= 0) {
+                alert("Has d'entrar el codi de votació!")
+                return;
+            }
+
             // vote4me_secretaria
             var secretaria_votada = jQuery(vote4me_item).find('#vote4me_secretaria').val();
             console.log("Secretaria votada:" + secretaria_votada);
@@ -57,11 +64,18 @@ jQuery(document).ready(function() {
                     jQuery(vote4me_item).find('.vote4me_spinner').toggleClass("vote4me_spinner_stop");
                     jQuery(vote4me_item).find('.vote4me_spinner').toggleClass("vote4me_drawn");
                 }, 300);
-
-
             });
-
         });
+    });
+
+    jQuery(this).find('#vote4me_survey-vote-button-final').click(function () {
+        var voting_code = jQuery(this).find('#vote4me_voting_code').val();
+        if (voting_code.length() <= 0) {
+            alert("Has d'entrar el codi de votació!")
+            return;
+        }
+        console.log(voting_code);
+
 
     });
 
@@ -70,3 +84,5 @@ jQuery(document).ready(function() {
     });
 
 });
+
+// 'voting_code': jQuery(vote4me_item).find('#vote4me_voting_code').val(), 
