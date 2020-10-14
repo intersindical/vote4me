@@ -31,7 +31,7 @@ jQuery(document).ready(function() {
 
             jQuery.post(vote4me_ajax_obj.ajax_url, data, function(response) {
                 var vote4me_json = jQuery.parseJSON(response);
-                console.log(response);
+                // console.log(response);
 
                 if (vote4me_json.voting_status == "error") {
                     alert(vote4m_json.message);
