@@ -57,7 +57,7 @@ jQuery(document).ready(function() {
                     }, 300);
 
 
-                    console.log('option_id: ' + vote4m_json.option_id);
+                    console.log('option_id: ' + vote4me_json.option_id);
                     console.log('votes: ' + vote4me_json.votes);
                     console.log('voting_status: ' + vote4me_json.voting_status);
                 }
@@ -97,9 +97,9 @@ jQuery(document).ready(function() {
                     jQuery(this).find('#vote4me_survey-vote-button').addClass('vote4me_scale_hide');
                 });
 
-                console.log('option_id: ' + vote4m_json.option_id);
+                console.log('option_id: ' + vote4me_json.option_id);
                 console.log('votes: ' + vote4me_json.votes);
-                console.log('total_votes: ' + vote4m_json.total_votes);
+                console.log('total_votes: ' + vote4me_json.total_votes);
                 console.log('voting_status: ' + vote4me_json.voting_status);
             }
         });
