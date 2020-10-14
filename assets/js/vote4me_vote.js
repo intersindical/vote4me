@@ -58,7 +58,7 @@ jQuery(document).ready(function() {
 
 
                     console.log('option_id: ' + vote4me_json.option_id);
-                    console.log('votes: ' + vote4me_json.votes);
+                    console.log('votes: ', vote4me_json.votes);
                     console.log('voting_status: ' + vote4me_json.voting_status);
                 }
             });
@@ -98,7 +98,7 @@ jQuery(document).ready(function() {
                 });
 
                 console.log('option_id: ' + vote4me_json.option_id);
-                console.log('votes: ' + vote4me_json.votes);
+                console.log('votes: ', vote4me_json.votes);
                 console.log('total_votes: ' + vote4me_json.total_votes);
                 console.log('voting_status: ' + vote4me_json.voting_status);
             }

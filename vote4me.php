@@ -5,7 +5,7 @@ Plugin Uri: https://educacio.intersindical-csc.cat
 Description: Vote plugin based on e-poll by InfoTheme
 Author: Gustau Castells (Intersindical-CSC)
 Author URI: https://educacio.intersindical-csc.cat
-Version: 0.1.49
+Version: 0.1.52
 Tags: WordPress poll, responsive poll, create poll, polls, booth, polling, voting, vote, survey, election, options, contest, contest system, poll system, voting, wp voting, question answer, question, q&a, wp poll system, poll plugin, election plugin, survey plugin, wp poll, user poll, user voting, wp poll, add poll, ask question, forum, poll, voting system, wp voting, vote system, posts, pages, widget.
 Text Domain: vote4me
 Licence: GPLv2 or later
@@ -142,7 +142,7 @@ if (!function_exists('vote4me_js_register')) {
         */
         wp_register_script(
             'vote4me_js',
-            plugins_url('/assets/js/vote4me.js?v='.time(), __FILE__),
+            plugins_url('/assets/js/vote4me.js?ver='.rand(), __FILE__),
             array('jquery','media-upload','wp-color-picker','thickbox')
         );
         wp_enqueue_script('vote4me_js');
@@ -184,7 +184,7 @@ if (!function_exists('vote4me_enqueue_script')) {
     add_action('wp_enqueue_scripts', 'vote4me_enqueue_script');
     function vote4me_enqueue_script()
     {
-        // DEBUG ?v='.time()
+        // DEBUG ?ver='.time()
         /*
         wp_enqueue_script(
             'vote4me_ajax',
@@ -194,7 +194,7 @@ if (!function_exists('vote4me_enqueue_script')) {
         */
         wp_enqueue_script(
             'vote4me_ajax',
-            plugins_url('/assets/js/vote4me_vote.js?v='.time(), __FILE__),
+            plugins_url('/assets/js/vote4me_vote.js?ver='.rand(), __FILE__),
             array('jquery')
         );
         wp_localize_script(
@@ -313,7 +313,7 @@ if (!function_exists('ajax_vote4me_vote')) {
                 //}
 
 
-                $votes_options_key = 'vote4me_vote_options_'.$poll_id.'_'.$voting_code;
+                $votes_key = 'vote4me_votes_'.$poll_id.'_'.$voting_code;
                 $votes_session_key = 'vote4me_vote_session_'.$poll_id.'_'.$voting_code;
 
                 if ($all_restrictions_ok) {
@@ -332,7 +332,7 @@ if (!function_exists('ajax_vote4me_vote')) {
                     
                     // Confirmem les votacions (afegim -1 al final)
                     array_push($votes, $option_id);
-                    update_post_meta($poll_id, $votes_options_key, $votes);
+                    update_post_meta($poll_id, $votes_key, $votes);
 
                     // Treiem la clau de la llista de disponibles i la posem a la d'usades
                     unset($voting_codes_available[$voting_code]);
@@ -361,13 +361,13 @@ if (!function_exists('ajax_vote4me_vote')) {
                     // És el primer vot, guardem un codi per evitar que pugui votar més d'una vegada
                     $_SESSION[$votes_session_key] = uniqid();
                     // Esborrem totes les possibles votacions prèvies
-                    update_post_meta($poll_id, $votes_options_key, array());
+                    update_post_meta($poll_id, $votes_key, array());
                 }
 
                 // DEBUG
                 //if (!vote4me_check_for_unique_voting($poll_id, $voting_code, $option_id)) {
                 if (true) {
-                    // Guardem el vot de manera temporal
+                    // Guardem el vot a les metadates del post
                     $votes = array();
                     if (get_post_meta($poll_id, $votes_key, true)) {
                         $votes = get_post_meta($poll_id, $votes_key, true);
