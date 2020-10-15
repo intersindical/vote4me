@@ -36,7 +36,7 @@ jQuery(document).ready(function($) {
 			<tr class="vote4me_append_option_filed_tr"> \
 			<td> \
 			<table class="form-table"> \
-			<tr><td>Name</td><td><input type="text" class="widefat" id="vote4me_poll_option" name="vote4me_poll_option[]" required/></td></tr> \
+			<tr><td>Name</td><td><input type="text" class="widefat" id="vote4me_poll_option_name" name="vote4me_poll_option_name[]" required/></td></tr> \
 			<tr><td>Imatge</td> \
 				<td><input type="url" class="widefat" id="vote4me_poll_option_img" name="vote4me_poll_option_img[]"/> \
 					<input type="hidden" name="vote4me_poll_option_id[]" id="vote4me_poll_option_id" value="' + uniqid + '"/></td> \

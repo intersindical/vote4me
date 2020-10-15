@@ -164,10 +164,17 @@
         if ($vote4me_query->have_posts()) {
             while ( $vote4me_query->have_posts() ) {
                 $vote4me_query->the_post();
-                
-                $vote4me_options = vote4me_get_options_sorted($poll_id);
 
-                foreach ($vote4me_options as $vote4me_option) {?>
+                $vote4me_poll_candidates = get_post_meta($poll_id, 'vote4me_poll_candidates', true);
+
+                // Sort by secretaries
+                usort(
+                    $vote4me_poll_candidates, function ($a, $b) {
+                        return strcmp($a['secretaria'], $b['secretaria']); 
+                    }
+                );
+
+                foreach ($vote4me_poll_candidates as $vote4me_candidate) {?>
                     <tr>
                         <!--
                     <td class="has-row-actions column-primary">
@@ -177,9 +184,9 @@
                         <?php //the_title();?>
                     </td>-->
                     <?php 
-                    echo "<td>".$vote4me_option['name']."</td>";
+                    echo "<td>".$vote4me_candidate['name']."</td>";
 
-                    $option_id = $vote4me_option['id'];
+                    $option_id = $vote4me_candidate['id'];
                     if (isset($option_id) && get_post_meta($poll_id, 'vote4me_vote_count_'.$option_id, true)) {
                         $vote_count = get_post_meta($poll_id, 'vote4me_vote_count_'.$option_id, true);
                         echo "<td>".$vote_count."</td>";
@@ -190,9 +197,9 @@
                     // votes in (x/x)
                     echo "<td></td>";
 
-                    echo "<td>".$vote4me_option['sex']."</td>";
-                    echo "<td>".$vote4me_option['territorial']."</td>";
-                    echo "<td>".$vote4me_option['secretaria']."</td>";
+                    echo "<td>".$vote4me_candidate['sex']."</td>";
+                    echo "<td>".$vote4me_candidate['territorial']."</td>";
+                    echo "<td>".$vote4me_candidate['secretaria']."</td>";
 
                     ?>
                     <!--
@@ -355,20 +362,23 @@
                                 <?php the_title();?>
                             </td>
                             <td>
-                                <?php echo get_post_meta(get_the_id(),'vote4me_poll_status',true);?>
+                                <?php echo get_post_meta(get_the_id(), 'vote4me_poll_status',true);?>
                             </td>
                             <td>
                                 <?php 
-                                if(get_post_meta(get_the_id(),'vote4me_vote_total_count',true)) echo get_post_meta(get_the_id(),'vote4me_vote_total_count',true); else echo 0;?>
+                                if (get_post_meta(get_the_id(), 'vote4me_vote_total_count',true)) {
+                                    echo get_post_meta(get_the_id(), 'vote4me_vote_total_count',true);
+                                } else {
+                                    echo 0;
+                                }?>
                             </td>
                             <td>
                                 <?php 
-                                    if(get_post_meta(get_the_id(),'vote4me_poll_option',true)){
-
-                                        echo sizeof(get_post_meta(get_the_id(),'vote4me_poll_option',true));	
-                                        }else{
-                                            echo '0';
-                                        }
+                                    if (get_post_meta(get_the_id(), 'vote4me_poll_option_name',true)) {
+                                        echo sizeof(get_post_meta(get_the_id(), 'vote4me_poll_option_name',true));	
+                                    } else {
+                                        echo '0';
+                                    }
                                 ?>
                             </td>
                             <td>

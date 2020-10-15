@@ -165,6 +165,10 @@
     text-align: center;
 }
 
+.vote4me_surveys_hide {
+    display: none;
+}
+
 .vote4me_survey-item {
     display: block;
     margin-top: 10px;
@@ -1223,6 +1227,12 @@
 
 .vote4me_voting_code_box {
     display: inline-block;
+}
+
+#vote4me_voting_code_btn {
+    margin: 10px;
+    padding: 20px 80px 20px 80px;
+    font-size: 18px;
 }
 
 /* Fix intersindical theme part */

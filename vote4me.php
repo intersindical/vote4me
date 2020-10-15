@@ -5,7 +5,7 @@ Plugin Uri: https://educacio.intersindical-csc.cat
 Description: Vote plugin based on e-poll by InfoTheme
 Author: Gustau Castells (Intersindical-CSC)
 Author URI: https://educacio.intersindical-csc.cat
-Version: 0.1.52
+Version: 0.2.12
 Tags: WordPress poll, responsive poll, create poll, polls, booth, polling, voting, vote, survey, election, options, contest, contest system, poll system, voting, wp voting, question answer, question, q&a, wp poll system, poll plugin, election plugin, survey plugin, wp poll, user poll, user voting, wp poll, add poll, ask question, forum, poll, voting system, wp voting, vote system, posts, pages, widget.
 Text Domain: vote4me
 Licence: GPLv2 or later
@@ -60,7 +60,6 @@ if (!function_exists('vote4me_plugin_conf')) {
             {
                 add_submenu_page('tools.php', __('Vote4me'), __('Vote4me'), 'manage_options', 'vote4me_system', 'vote4me_system');
             }
-
         }
         // Voting Settings Page Callabck
         if (!function_exists('vote4me_system')) {
@@ -125,8 +124,9 @@ if (!function_exists('vote4me_poll_create_poll') ) {
 
 //Add vote4me Admin Scripts
 if (!function_exists('vote4me_js_register')) {
-    
+
     add_action('admin_enqueue_scripts', 'vote4me_js_register');
+
     function vote4me_js_register()
     {
         wp_enqueue_script('media-upload');
@@ -305,12 +305,8 @@ if (!function_exists('ajax_vote4me_vote')) {
                 $all_restrictions_ok = false;
                 // TODO: Comprovar paritat i territorial
 
-                // $vote4me_options = vote4me_get_options_sorted($poll_id);
-                //foreach ($vote4me_options as $options) {
-                //    if ($options['id'] == $option_id) {
-                //        print_r($options);
-                //    }
-                //}
+                // $vote4me_poll_candidates = get_post_meta($poll_id, 'vote4me_poll_candidates', true);
+
 
 
                 $votes_key = 'vote4me_votes_'.$poll_id.'_'.$voting_code;
@@ -321,7 +317,7 @@ if (!function_exists('ajax_vote4me_vote')) {
                     // i les restriccions estan bé
                     
                     // Nombre total de vots (no només d'aquest usuari)
-                    if (get_post_meta($poll_id, 'vote4me_vote_total_count')) {
+                    if (get_post_meta($poll_id, 'vote4me_vote_total_count', true)) {
                         $total_votes = get_post_meta($poll_id, 'vote4me_vote_total_count', true) + 1;
                     } else {
                         $total_votes = 1;
@@ -409,42 +405,6 @@ if (!function_exists('vote4me_check_for_unique_voting')) {
     }
 }
 
-if (!function_exists('vote4me_get_options_sorted')) {
-    function vote4me_get_options_sorted($poll_id)
-    {
-        $vote4me_options = array();
-        
-        $options = array(
-            array('name', 'vote4me_poll_option'),
-            array('img', 'vote4me_poll_option_img'),
-            array('cover_img', 'vote4me_poll_option_cover_img'),
-            array('sex', 'vote4me_poll_option_sex'),
-            array('territorial', 'vote4me_poll_option_territorial'),
-            array('secretaria', 'vote4me_poll_option_secretaria'),
-            array('id','vote4me_poll_option_id'));
-
-        foreach ($options as $option) {
-            $info = array();
-            $info = get_post_meta($poll_id, $option[1], true);
-            $k = 0;
-            foreach ($info as $item) {
-                $vote4me_options[$k][$option[0]] = $item;
-                $k++;
-            }
-        }
-        // print_r($vote4me_options);
-
-        // Sort by secretaries
-        usort(
-            $vote4me_options, function ($a, $b) {
-                return strcmp($a['secretaria'], $b['secretaria']); 
-            }
-        );
-
-        return $vote4me_options;
-    }
-}
-
 // Adding Columns to epoll cpt
 if (!function_exists('set_custom_edit_vote4me_columns')) {
     add_filter( 'manage_vote4me_poll_posts_columns', 'set_custom_edit_vote4me_columns' );
@@ -476,12 +436,12 @@ if (!function_exists('custom_vote4me_poll_column')) {
             echo "<span style='text-transform:uppercase'>".get_post_meta(get_the_id(), 'vote4me_poll_status', true)."</span>";
             break;
         case 'total_option' :
-            if (get_post_meta($post_id,'vote4me_poll_option', true)) {
-                $total_opt = sizeof(get_post_meta($post_id, 'vote4me_poll_option', true));
+            if (get_post_meta($post_id,'vote4me_poll_candidates', true)) {
+                $total_candidates = sizeof(get_post_meta($post_id, 'vote4me_poll_candidates', true));
             } else {
-                $total_opt = 0;
+                $total_candidates = 0;
             }
-            echo $total_opt;
+            echo $total_candidates;
             break;
         case 'view_result' :
             echo "<a target='_blank' href='".admin_url('admin.php?page=vote4me_system&view=results&id='.$post_id)."' class='button button-primary'>View (Pro Only)</a>";

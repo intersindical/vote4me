@@ -12,8 +12,8 @@ function vote4me_add_shortcode($atts, $content = null)
     );
 
     $it_poll_shortcode_args = array (
-        'post_type'    => array( 'vote4me_poll' ),
-        'post_status'  => array( 'publish' ),
+        'post_type'    => array('vote4me_poll'),
+        'post_status'  => array('publish'),
         'nopaging'     => true,
         'order'        => 'DESC',
         'orderby'      => 'date',
@@ -25,10 +25,15 @@ function vote4me_add_shortcode($atts, $content = null)
     // The Loop
     ob_start();
     if ($vote4me_post_query->have_posts()) {
+        while ($vote4me_post_query->have_posts()) : $vote4me_post_query->the_post();
 
-        while ($vote4me_post_query->have_posts() ) : $vote4me_post_query->the_post();
-
-            $vote4me_options = vote4me_get_options_sorted(get_the_id());
+            $vote4me_poll_candidates = get_post_meta(get_the_id(), 'vote4me_poll_candidates', true);
+            // Sort by secretaries
+            usort(
+                $vote4me_poll_candidates, function ($a, $b) {
+                    return strcmp($a['secretaria'], $b['secretaria']); 
+                }
+            );
 
             $vote4me_secretaria_title = "";
 
@@ -56,8 +61,10 @@ function vote4me_add_shortcode($atts, $content = null)
             <h1 class="vote4me_title">
             <span class="vote4me_title_exact"><?php the_title();?></span>
             <span class="vote4me_survey-stage">
-            <span class="vote4me_stage vote4me_live vote4me_active" <?php if ($vote4me_poll_status !== 'live') echo 'style="display:none;"';?>>Votació activa</span>
-            <span class="vote4me_stage vote4me_ended vote4me_active" <?php if ($vote4me_poll_status !== 'end') echo 'style="display:none;"';?>>Votació tancada</span>
+            <span class="vote4me_stage vote4me_live vote4me_active" <?php
+                if ($vote4me_poll_status !== 'live') echo 'style="display:none;"';?>>Votació activa</span>
+            <span class="vote4me_stage vote4me_ended vote4me_active" <?php
+                if ($vote4me_poll_status !== 'end') echo 'style="display:none;"';?>>Votació tancada</span>
             </span>
             </h1>
             <div class="vote4me_inner">
@@ -65,18 +72,22 @@ function vote4me_add_shortcode($atts, $content = null)
             <div class="vote4me_voting_code_box">
             <span class="vote4me_voting_code_label">Codi de votació:</span>
             <input type="text" name="vote4me_voting_code" id="vote4me_voting_code">
+            <input type="button" name="vote4me_voting_code_btn" id="vote4me_voting_code_btn" value="Vull votar!">
+            <input type="hidden" name="vote4me_poll-id" id="vote4me_poll-id" value="<?php echo get_the_id();?>">
             </div>
 
-            <ul class="vote4me_surveys <?php if($vote4me_poll_style == 'list') echo 'vote4me_list'; else echo 'vote4me_grid';?>">
+            <ul class="vote4me_surveys vote4me_surveys_hide <?php
+                if ($vote4me_poll_style == 'list') echo 'vote4me_list'; else echo 'vote4me_grid';
+            ?>">
             <?php
-            $i=0;
-            if ($vote4me_options[0]["name"]) {
-                foreach ($vote4me_options as $vote4me_option) :
+            
+            if (isset($vote4me_poll_candidates[0]['name'])) {
+                foreach ($vote4me_poll_candidates as $vote4me_candidate) :
                     $vote4me_poll_vote_count = (int)get_post_meta(
                         get_the_id(),
-                        'vote4me_vote_count_'.(float)$vote4me_option['id'], true
+                        'vote4me_vote_count_'.(float)$vote4me_candidate['id'], true
                     );
-                    //print_r($vote4me_options['ids'][$i]);
+                    //print_r($vote4me_candidate['id']);
                     $vote4me_poll_vote_percentage =0;
                     if ($vote4me_poll_vote_count == 0) {
                         $vote4me_poll_vote_percentage = 0;
@@ -87,11 +98,12 @@ function vote4me_add_shortcode($atts, $content = null)
                     ?>
 
                     <?php
-                    if ($vote4me_option['secretaria'] != $vote4me_secretaria_title) {
-                        $vote4me_secretaria_title = $vote4me_option['secretaria'];
+                    if ($vote4me_candidate['secretaria'] != $vote4me_secretaria_title) {
+                        $vote4me_secretaria_title = $vote4me_candidate['secretaria'];
                         ?>
                         <hr />
-                        <div class="vote4me_secretaria_title"><?php echo $vote4me_secretaria_title;?></div>
+                        <div class="vote4me_secretaria_title">
+                            <?php echo $vote4me_secretaria_title;?></div>
                         <?php
                     }
                     ?>
@@ -100,17 +112,17 @@ function vote4me_add_shortcode($atts, $content = null)
                     <div class="vote4me_survey-item-inner">
                     <div class="vote4me_big_cover">
                     <?php
-                    if ($vote4me_option['cover_img']) {
-                        if (isset($vote4me_option['cover_img'])) {
-                            echo '<img src="'.$vote4me_option['cover_img'].'">';
+                    if ($vote4me_candidate['cover_img']) {
+                        if (isset($vote4me_candidate['cover_img'])) {
+                            echo '<img src="'.$vote4me_candidate['cover_img'].'">';
                         }
                     }?>
                     </div>
                 
                     <?php
-                    if (isset($vote4me_option['img'])) {?>
+                    if (isset($vote4me_candidate['img'])) {?>
                         <div class="vote4me_survey-country vote4me_grid-only">
-                        <img src="<?php echo $vote4me_option['img'];?>">
+                        <img src="<?php echo $vote4me_candidate['img'];?>">
                         <div class="vote4me_spinner">
                         <svg version="1.1" id="vote4me_tick" xmlns="http://www.w3.org/2000/svg"
                          xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -126,18 +138,18 @@ function vote4me_add_shortcode($atts, $content = null)
                         <?php
                     } ?>
                     <div class="vote4me_survey-name">
-                    <?php echo $vote4me_option['name'];?>
+                    <?php echo $vote4me_candidate['name'];?>
                     </div>
                     <div class="vote4me_survey-territorial">
-                    <?php echo $vote4me_option['territorial'][$i];?>
+                    <?php echo $vote4me_candidate['territorial'];?>
                     </div>
                     <div class="vote4me_survey-secretaria">
-                    <?php echo $vote4me_option['secretaria'][$i];?>
+                    <?php echo $vote4me_candidate['secretaria'];?>
                     </div>
 
                     <?php
                     // DEBUG
-                    //if (vote4me_check_for_unique_voting(get_the_id(), $vote4me_option['id'])) {
+                    //if (vote4me_check_for_unique_voting(get_the_id(), $vote4me_candidate['id'])) {
                     if (false) {
                         ?>
                         <div class="vote4me_survey-item-action vote4me_survey-item-action-disabled"></div>
@@ -148,10 +160,10 @@ function vote4me_add_shortcode($atts, $content = null)
                     } else { ?>
                         <div class="vote4me_survey-item-action">
                         <form action="" name="vote4me_survey-item-action-form" class="vote4me_survey-item-action-form">
-                            <input type="hidden" name="vote4me_poll-id" id="vote4me_poll-id" value="<?php echo get_the_id();?>">
-                            <input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_option['id'];?>">
-                            <input type="hidden" name="vote4me_secretaria" id="vote4me_secretaria" value="<?php echo $vote4me_option['secretaria'];?>">
-                            <input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vota">
+                            <input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_candidate['id'];?>">
+                            <input type="hidden" name="vote4me_secretaria" id="vote4me_secretaria" value="<?php echo $vote4me_candidate['secretaria'];?>">
+                            <input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button"
+                            class="vote4me_orange_gradient" value="Vota">
                         </form>
                         </div>
                     <?php } ?>
@@ -159,20 +171,19 @@ function vote4me_add_shortcode($atts, $content = null)
                 <div class="vote4me_pull-right">
                     <span class="vote4me_survey-progress">
                         <span class="vote4me_survey-progress-labels">
-                            <input type="hidden" name="vote4me_poll_e_vote_count" id="vote4me_poll_e_vote_count" value="<?php echo $vote4me_poll_vote_count; ?>"/>
+                            <input type="hidden" name="vote4me_poll_e_vote_count" id="vote4me_poll_e_vote_count" value="<?php
+                             echo $vote4me_poll_vote_count; ?>"/>
                         </span>
                     </span>
                 </div>
                 </div>
                 </li>
                     <?php
-                    $i++;
                 endforeach;
                 ?>
                 <br><hr><br>
                 <div class="vote4me_survey-item-action-final">
                 <form action="" name="vote4me_survey-item-action-form-final" class="vote4me_survey-item-action-form-final">
-                    <input type="hidden" name="vote4me_poll-id" id="vote4me_poll-id" value="<?php echo get_the_id();?>">
                     <input type="button" name="vote4me_survey-vote-button-final" id="vote4me_survey-vote-button-final"
                         class="vote4me_red_gradient" value="Entra el codi de votació i fes clic aquí per confirmar les votacions!">
                 </form>
@@ -182,11 +193,12 @@ function vote4me_add_shortcode($atts, $content = null)
                 echo '</ul> <div style="clear:both;"></div>';
             } else {
                 if (current_user_can('author') || current_user_can('editor') || current_user_can('administrator')) {
-                    _e('<p class="vote4me_short_code">Please add some questions or may be you missed the option field.</p><br><a href="'.get_edit_post_link(get_the_id()).'" class="vote4me_survey-notfound-button" style="width:auto;max-width:100%;">Edit This Poll</a>', 'vote4me');
+                    $link = get_edit_post_link(get_the_id());
+                    echo '<p class="vote4me_short_code" style="text-align:center;">No hi ha candidats per votar!</p><br>';
+                    echo '<a href="'.$link.'" class="vote4me_survey-notfound-button" style="width:auto;max-width:100%;">Edita els candidats</a>';
                 } else {
-                    _e('<p class="vote4me_short_code">This Poll is not yet ready contact site administrator</p>', 'vote4me');
+                    echo '<p class="vote4me_short_code">Aquesta elecció encara no està llesta. Posa\'t en contacte amb l\'administrador</p>';
                 }
-                
             }?>
         </div>
         <div class="vote4me_powered_by">
