@@ -84,6 +84,9 @@ jQuery(document).ready(function() {
 
         // Enviem la informació al servidor
         jQuery.post(vote4me_ajax_obj.ajax_url, data, function (response) {
+
+            console.log(response);
+
             var vote4me_json = jQuery.parseJSON(response);
 
             // Comprovem la resposta
