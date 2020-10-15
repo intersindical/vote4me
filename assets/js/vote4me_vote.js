@@ -5,7 +5,7 @@ jQuery(document).ready(function() {
     jQuery('.vote4me_survey-item').each(function() {
         var vote4me_item = jQuery(this);
 
-        jQuery(this).find('#vote4me_survey-vote-button').click(function() {
+        jQuery(this).find('.vote4me_survey-vote-button').click(function() {
             // Comprovem que s'hagi entrat un codi de votació
             var voting_code = jQuery(document).find('#vote4me_voting_code').val();
             if (voting_code == "") {
@@ -14,7 +14,7 @@ jQuery(document).ready(function() {
             }
 
             // Guardem la secretaria votada (per deshabilitar les altres opcions)
-            var secretaria_votada = jQuery(vote4me_item).find('#vote4me_secretaria').val();
+            var secretaria_votada = jQuery(vote4me_item).find('.vote4me_secretaria').val();
             //console.log("Secretaria votada:" + secretaria_votada);
 
             // Enviem el vot al servidor (codi de votació, votació, vot)
@@ -26,7 +26,7 @@ jQuery(document).ready(function() {
                 'action': 'vote4me_vote',
                 'voting_code': voting_code,
                 'poll_id': jQuery(document).find('#vote4me_poll-id').val(),
-                'option_id': jQuery(vote4me_item).find('#vote4me_survey-item-id').val()
+                'option_id': jQuery(vote4me_item).find('.vote4me_survey-item-id').val()
             };
 
             jQuery.post(vote4me_ajax_obj.ajax_url, data, function(response) {
@@ -38,9 +38,9 @@ jQuery(document).ready(function() {
                 else {
                     // Deshabilitem les altres opcions de la secretaria votada
                     jQuery(vote4me_item).parent().find('.vote4me_survey-item').each(function () {
-                        var secretaria = jQuery(this).find('#vote4me_secretaria').val();
+                        var secretaria = jQuery(this).find('.vote4me_secretaria').val();
                         if (secretaria_votada == secretaria) {
-                            var voteBtn = jQuery(this).find('#vote4me_survey-vote-button');
+                            var voteBtn = jQuery(this).find('.vote4me_survey-vote-button');
                             voteBtn.val('...');
                             voteBtn.attr('disabled', 'yes');
                         }
@@ -57,8 +57,8 @@ jQuery(document).ready(function() {
 
 
                     //console.log('option_id: ' + vote4me_json.option_id);
-                    //console.log('votes: ', vote4me_json.votes);
-                    //console.log('voting_status: ' + vote4me_json.voting_status);
+                    console.log('votes: ', vote4me_json.votes);
+                    console.log('voting_status: ' + vote4me_json.voting_status);
                 }
             });
         });
@@ -93,13 +93,13 @@ jQuery(document).ready(function() {
             else {
                 // Amaga tots els botons de votació
                 jQuery(document).find('.vote4me_survey-item').each(function() {
-                    jQuery(this).find('#vote4me_survey-vote-button').addClass('vote4me_scale_hide');
+                    jQuery(this).find('.vote4me_survey-vote-button').addClass('vote4me_scale_hide');
                 });
 
                 //console.log('option_id: ' + vote4me_json.option_id);
-                //console.log('votes: ', vote4me_json.votes);
-                //console.log('total_votes: ' + vote4me_json.total_votes);
-                //console.log('voting_status: ' + vote4me_json.voting_status);
+                console.log('votes: ', vote4me_json.votes);
+                console.log('total_votes: ' + vote4me_json.total_votes);
+                console.log('voting_status: ' + vote4me_json.voting_status);
             }
         });
 

@@ -135,9 +135,9 @@ while ( have_posts() ) : the_post();
             } else { ?>
                 <div class="vote4me_survey-item-action">
                 <form action="" name="vote4me_survey-item-action-form" class="vote4me_survey-item-action-form">
-                    <input type="hidden" name="vote4me_survey-item-id" id="vote4me_survey-item-id" value="<?php echo $vote4me_candidate['id'];?>">
-                    <input type="hidden" name="vote4me_secretaria" id="vote4me_secretaria" value="<?php echo $vote4me_candidate['secretaria'];?>">
-                    <input type="button" name="vote4me_survey-vote-button" id="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vota">
+                    <input type="hidden" name="vote4me_survey-item-id" class="vote4me_survey-item-id" value="<?php echo $vote4me_candidate['id'];?>">
+                    <input type="hidden" name="vote4me_secretaria" class="vote4me_secretaria" value="<?php echo $vote4me_candidate['secretaria'];?>">
+                    <input type="button" name="vote4me_survey-vote-button" class="vote4me_survey-vote-button" class="vote4me_orange_gradient" value="Vota">
                 </form>
                 </div>
             <?php } ?>          
