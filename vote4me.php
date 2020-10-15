@@ -290,13 +290,16 @@ if (!function_exists('ajax_vote4me_vote')) {
                 $result = array("voting_status"=>"error","message"=>"[Err3] Error en la votació");
                 die(json_encode($result));
             }
-            
+
+            $votes_key = 'vote4me_votes_'.$poll_id.'_'.$voting_code;
+            $votes_session_key = 'vote4me_vote_session_'.$poll_id.'_'.$voting_code;
+
             if ($option_id == -1) {
                 // Confirmació de la votació
 
                 // Llegim els vots parcials
-                if (get_post_meta($poll_id, $votes_options_key, true)) {
-                    $votes = get_post_meta($poll_id, $votes_options_key, true);
+                if (get_post_meta($poll_id, $votes_key, true)) {
+                    $votes = get_post_meta($poll_id, $votes_key, true);
                 } else {
                     $result = array("voting_status"=>"error","message"=>"[Err4] Error en la votació");
                     die(json_encode($result));
@@ -306,11 +309,6 @@ if (!function_exists('ajax_vote4me_vote')) {
                 // TODO: Comprovar paritat i territorial
 
                 // $vote4me_poll_candidates = get_post_meta($poll_id, 'vote4me_poll_candidates', true);
-
-
-
-                $votes_key = 'vote4me_votes_'.$poll_id.'_'.$voting_code;
-                $votes_session_key = 'vote4me_vote_session_'.$poll_id.'_'.$voting_code;
 
                 if ($all_restrictions_ok) {
                     // L'usuari està confirmant la votació, la clau està dins la llista de claus disponibles
