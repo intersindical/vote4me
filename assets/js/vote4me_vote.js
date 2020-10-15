@@ -33,7 +33,7 @@ jQuery(document).ready(function() {
                 var vote4me_json = jQuery.parseJSON(response);
 
                 if (vote4me_json.voting_status == "error") {
-                    alert(vote4m_json.message);
+                    alert(vote4me_json.message);
                 }
                 else {
                     // Deshabilitem les altres opcions de la secretaria votada
