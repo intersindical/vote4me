@@ -166,6 +166,7 @@ function vote4me_metabox_forms( $post )
                             <option value="Terres de l\'Ebre" <?php if ($vote4me_candidate['territorial'] == 'Terres de l\'Ebre') echo esc_attr('selected', 'vote4me');?>>Terres de l'Ebre</option>
                             <option value="Vallès Occidental" <?php if ($vote4me_candidate['territorial'] == 'Vallès Occidental') echo esc_attr('selected', 'vote4me');?>>Vallès Occidental</option>
                             <option value="Barcelona" <?php if ($vote4me_candidate['territorial'] == 'Barcelona') echo esc_attr('selected', 'vote4me');?>>Barcelona</option>
+                            <option value="Catalunya" <?php if ($vote4me_candidate['territorial'] == 'Catalunya') echo esc_attr('selected', 'vote4me');?>>Catalunya</option>
                         </select>
                     </td>
                 </tr>
@@ -334,7 +335,7 @@ function update_poll_candidates($post_id)
             'img'=> $img_url,
             'cover_img'=>"",
             'sex'=>'other',
-            'territorial'=>"",
+            'territorial'=>"Catalunya",
             'secretaria'=>""
         );
 

@@ -61,7 +61,8 @@ jQuery(document).ready(function($) {
 					<option value="Tarragona" >Tarragona</option> \
 					<option value="Terres de l\'Ebre">Terres de l\'Ebre</option> \
 					<option value="Vallès Occidental">Vallès Occidental</option> \
-					<option value="Barcelona">Barcelona</option> \
+                    <option value="Barcelona">Barcelona</option> \
+                    <option value="Catalunya">Catalunya</option> \
 					</select></td></tr> \
 			<tr><td>Secretaria</td> \
 				<td><select class="widefat" id="vote4me_poll_option_secretaria" name="vote4me_poll_option_secretaria[]" value="" required> \

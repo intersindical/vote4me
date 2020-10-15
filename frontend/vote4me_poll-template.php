@@ -158,7 +158,7 @@ while ( have_posts() ) : the_post();
         <div class="vote4me_survey-item-action-final">
         <form action="" name="vote4me_survey-item-action-form-final" class="vote4me_survey-item-action-form-final">
             <input type="button" name="vote4me_survey-vote-button-final" id="vote4me_survey-vote-button-final"
-                class="vote4me_red_gradient" value="Entra el codi de votació i fes clic aquí per confirmar les votacions!">
+                class="vote4me_red_gradient" value="Fes clic aquí per confirmar les votacions!">
         </form>
         </div>
         <?php
