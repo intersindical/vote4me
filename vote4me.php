@@ -5,7 +5,7 @@ Plugin Uri: https://educacio.intersindical-csc.cat
 Description: Vote plugin based on e-poll by InfoTheme
 Author: Gustau Castells (Intersindical-CSC)
 Author URI: https://educacio.intersindical-csc.cat
-Version: 0.2.15
+Version: 0.2.16
 Tags: WordPress poll, responsive poll, create poll, polls, booth, polling, voting, vote, survey, election, options, contest, contest system, poll system, voting, wp voting, question answer, question, q&a, wp poll system, poll plugin, election plugin, survey plugin, wp poll, user poll, user voting, wp poll, add poll, ask question, forum, poll, voting system, wp voting, vote system, posts, pages, widget.
 Text Domain: vote4me
 Licence: GPLv2 or later
@@ -265,11 +265,19 @@ if (!function_exists('ajax_vote4me_vote')) {
             }
 
             if (get_post_meta($poll_id, 'vote4me_voting_codes')) {
-                $voting_codes = get_post_meta($poll_id, 'vote4me_voting_codes', true);
+                $voting_codes = get_post_meta(
+                    $poll_id,
+                    'vote4me_voting_codes',
+                    true
+                );
             }
 
             if (get_post_meta($poll_id, 'vote4me_voting_codes_used')) {
-                $voting_codes_used = get_post_meta($poll_id, 'vote4me_voting_codes_used', true);
+                $voting_codes_used = get_post_meta(
+                    $poll_id,
+                    'vote4me_voting_codes_used',
+                    true
+                );
             }
 
             // Validate voting code
@@ -320,7 +328,11 @@ if (!function_exists('ajax_vote4me_vote')) {
                     } else {
                         $total_votes = 1;
                     }
-                    update_post_meta($poll_id, 'vote4me_vote_total_count', $total_votes);
+                    update_post_meta(
+                        $poll_id,
+                        'vote4me_vote_total_count',
+                        $total_votes
+                    );
 
                     // Comptabilitzem els vots de les secretaries
                     
@@ -328,14 +340,8 @@ if (!function_exists('ajax_vote4me_vote')) {
                     array_push($votes, $option_id);
                     update_post_meta($poll_id, $votes_key, $votes);
 
-                    // Treiem la clau de la llista de disponibles i la posem a la d'usades
-                    unset($voting_codes_available[$voting_code]);
+                    // Posem la clau a la llista d'usades
                     array_push($voting_codes_used, $voting_code);
-                    update_post_meta(
-                        $poll_id,
-                        'vote4me_voting_codes_available',
-                        $voting_codes_available
-                    );
                     update_post_meta(
                         $poll_id,
                         'vote4me_voting_codes_used',

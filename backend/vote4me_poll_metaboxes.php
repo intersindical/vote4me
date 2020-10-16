@@ -93,8 +93,8 @@ function vote4me_metabox_forms( $post )
         </tr>
 
         <tr>
-        <td><?php _e('Codis de votació', 'vote4me'); ?></td>
-        <td><textarea name="vote4me_voting_codes" id="vote4me_voting_codes" rows="20" cols="32"><?php
+        <td><?php _e('Codis de votació (separats per comes)', 'vote4me'); ?></td>
+        <td colspan="3"><textarea name="vote4me_voting_codes" id="vote4me_voting_codes" rows="20" cols="100"><?php
         foreach ($vote4me_voting_codes as $code) {
             echo $code."\n";
         }?></textarea>
@@ -289,7 +289,8 @@ function vote4me_save_options( $post_id )
 
     // Updating voting codes
     if (isset($_POST['vote4me_voting_codes'])) {
-        $vote4me_voting_codes =  sanitize_text_field($_POST['vote4me_voting_codes']);
+        $vote4me_voting_codes = sanitize_text_field($_POST['vote4me_voting_codes']);
+        $vote4me_voting_codes = explode(", ", $vote4me_voting_codes);
         update_post_meta($post_id, 'vote4me_voting_codes', $vote4me_voting_codes);
     }
 
