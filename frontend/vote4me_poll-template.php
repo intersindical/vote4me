@@ -23,7 +23,8 @@ while ( have_posts() ) : the_post();
     $vote4me_poll_vote_total_count = (int)get_post_meta(get_the_id(), 'vote4me_vote_total_count', true);
     $vote4me_poll_container_color_primary = get_post_meta($post->ID, 'vote4me_poll_container_color_primary', true);
 
-    $vote4me_voting_codes_available = get_post_meta(get_the_id(), 'vote4me_voting_codes_available', true);
+    $vote4me_voting_codes = get_post_meta(get_the_id(), 'vote4me_voting_codes', true);
+    //$vote4me_voting_codes_available = get_post_meta(get_the_id(), 'vote4me_voting_codes_available', true);
     $vote4me_voting_codes_used = get_post_meta(get_the_id(), 'vote4me_voting_codes_used', true);
     
     $vote4me_secretaria_title = "";

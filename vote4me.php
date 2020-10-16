@@ -264,8 +264,8 @@ if (!function_exists('ajax_vote4me_vote')) {
                 die(json_encode($result));
             }
 
-            if (get_post_meta($poll_id, 'vote4me_voting_codes_available')) {
-                $voting_codes_available = get_post_meta($poll_id, 'vote4me_voting_codes_available', true);
+            if (get_post_meta($poll_id, 'vote4me_voting_codes')) {
+                $voting_codes = get_post_meta($poll_id, 'vote4me_voting_codes', true);
             }
 
             if (get_post_meta($poll_id, 'vote4me_voting_codes_used')) {
@@ -279,15 +279,15 @@ if (!function_exists('ajax_vote4me_vote')) {
                 $voting_code = '';
                 $_SESSION['vote4me_session'] = uniqid();
             } else {
-                $key = array_search($voting_code, $voting_codes_available);
-                if ($key !== false) {
-                    // La clau està a la llista de claus 'disponibles'
+                $key = array_search($voting_code, $voting_codes_used);
+                if ($key !== true) {
+                    // La clau no està a la llista de claus usades
                     $voting_code_is_ok = true;
                 }
             }
 
             if (!$voting_code_is_ok) {
-                $result = array("voting_status"=>"error","message"=>"[Err3] Error en la votació");
+                $result = array("voting_status"=>"error","message"=>"[Err3] Error en la votació. Clau ja usada");
                 die(json_encode($result));
             }
 
@@ -301,7 +301,7 @@ if (!function_exists('ajax_vote4me_vote')) {
                 if (get_post_meta($poll_id, $votes_key, true)) {
                     $votes = get_post_meta($poll_id, $votes_key, true);
                 } else {
-                    $result = array("voting_status"=>"error","message"=>"[Err4] Error en la votació");
+                    $result = array("voting_status"=>"error","message"=>"[Err4] Error en la votació. No hi ha vots a confirmar");
                     die(json_encode($result));
                 }
 

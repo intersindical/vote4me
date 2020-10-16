@@ -34,8 +34,9 @@ function vote4me_metabox_forms( $post )
     $vote4me_poll_style = get_post_meta($post->ID, 'vote4me_poll_style', true);
     $vote4me_poll_ui = get_post_meta($post->ID, 'vote4me_poll_ui', true);
     $vote4me_poll_vote_total_count = (int)get_post_meta($post->ID, 'vote4me_vote_total_count', true);
-    $vote4me_poll_container_color_primary = get_post_meta($post->ID, 'vote4me_poll_container_color_primary', true );
-    
+    $vote4me_poll_container_color_primary = get_post_meta($post->ID, 'vote4me_poll_container_color_primary', true);
+    $vote4me_voting_codes = get_post_meta($post->ID, 'vote4me_voting_codes', true);
+
     if (get_post_meta($post->ID, 'vote4me_poll_candidates', true)) {
         $vote4me_poll_candidates = get_post_meta($post->ID, 'vote4me_poll_candidates', true);	
     }
@@ -84,11 +85,20 @@ function vote4me_metabox_forms( $post )
         </td>
         </tr>
         <tr>
-            <td><?php _e('Container Gradient', 'vote4me');?></td>
+            <td><?php _e('Container Gradient', 'vote4me'); ?></td>
             <td colspan="1">
                 <input type="text" class="widefat vote4me_color-field"
                 name="vote4me_poll_container_color_primary" value=""/>
             </td>
+        </tr>
+
+        <tr>
+        <td><?php _e('Codis de votació', 'vote4me'); ?></td>
+        <td><textarea name="vote4me_voting_codes" id="vote4me_voting_codes" rows="20" cols="32"><?php
+        foreach ($vote4me_voting_codes as $code) {
+            echo $code."\n";
+        }?></textarea>
+        </td>
         </tr>
         
     </table>
@@ -266,15 +276,21 @@ function vote4me_save_options( $post_id )
     }
 
     // Updating Poll Style
-    if (isset($_POST['vote4me_poll_style'])){
+    if (isset($_POST['vote4me_poll_style'])) {
         $vote4me_poll_style =  sanitize_text_field($_POST['vote4me_poll_style']);
-        update_post_meta( $post_id, 'vote4me_poll_style', $vote4me_poll_style );
+        update_post_meta($post_id, 'vote4me_poll_style', $vote4me_poll_style);
     }
 
     // Updating Poll Container Primary Color
-    if (isset($_POST['vote4me_poll_container_color_primary'])){
+    if (isset($_POST['vote4me_poll_container_color_primary'])) {
         $vote4me_poll_ui =  sanitize_text_field($_POST['vote4me_poll_container_color_primary']);
-        update_post_meta( $post_id, 'vote4me_poll_container_color_primary', $vote4me_poll_ui );
+        update_post_meta($post_id, 'vote4me_poll_container_color_primary', $vote4me_poll_ui);
+    }
+
+    // Updating voting codes
+    if (isset($_POST['vote4me_voting_codes'])) {
+        $vote4me_voting_codes =  sanitize_text_field($_POST['vote4me_voting_codes']);
+        update_post_meta($post_id, 'vote4me_voting_codes', $vote4me_voting_codes);
     }
 
     // Updating Poll Container Secondary Color
