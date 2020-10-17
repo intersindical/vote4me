@@ -5,7 +5,7 @@ Plugin Uri: https://educacio.intersindical-csc.cat
 Description: Vote plugin based on e-poll by InfoTheme
 Author: Gustau Castells (Intersindical-CSC)
 Author URI: https://educacio.intersindical-csc.cat
-Version: 0.2.18
+Version: 0.2.20
 Tags: WordPress poll, responsive poll, create poll, polls, booth, polling, voting, vote, survey, election, options, contest, contest system, poll system, voting, wp voting, question answer, question, q&a, wp poll system, poll plugin, election plugin, survey plugin, wp poll, user poll, user voting, wp poll, add poll, ask question, forum, poll, voting system, wp voting, vote system, posts, pages, widget.
 Text Domain: vote4me
 Licence: GPLv2 or later
@@ -245,7 +245,7 @@ if (!function_exists('ajax_vote4me_vote')) {
             }
 
             if (isset($_POST['voting_code'])) {
-                $voting_code = (float) sanitize_text_field($_POST['voting_code']);
+                $voting_code = (string) sanitize_text_field($_POST['voting_code']);
             } else {
                 $_SESSION['vote4me_session'] = uniqid();
                 $result = array("voting_status"=>"error","message"=>"[Err2] Error en la votació");
@@ -273,10 +273,10 @@ if (!function_exists('ajax_vote4me_vote')) {
             }
 
             $voting_code_is_ok = false;
-            $key = array_search($voting_code, $voting_codes);
+            $key = array_search($voting_code, $voting_codes, true);
             if ($key !== false) {
                 // La clau és vàlida, mirem si ja ha estat usada
-                $key = array_search($voting_code, $voting_codes_used);
+                $key = array_search($voting_code, $voting_codes_used, true);
                 if ($key !== true) {
                     // La clau no està a la llista de claus usades i és vàlida
                     $voting_code_is_ok = true;
@@ -284,7 +284,7 @@ if (!function_exists('ajax_vote4me_vote')) {
             }
 
             if (!$voting_code_is_ok) {
-                $result = array("voting_status"=>"error","message"=>"[Err3] Error en la votació.");
+                $result = array("voting_status"=>"error","message"=>"[Err3] Error en el codi de votació.");
                 die(json_encode($result));
             }
 
@@ -339,50 +339,61 @@ if (!function_exists('ajax_vote4me_vote')) {
                     die(json_encode($result));
                 }
 
-                $all_restrictions_ok = false;
                 // TODO: Comprovar paritat i territorial
+                $all_restrictions_ok = check_vote_restrictions($votes);
 
-                
-
-                if ($all_restrictions_ok) {
-                    // L'usuari està confirmant la votació, la clau està dins la llista de claus disponibles
-                    // i les restriccions estan bé
-                    
-                    // Nombre total de vots (no només d'aquest usuari)
-                    if (get_post_meta($poll_id, 'vote4me_vote_total_count', true)) {
-                        $total_votes = get_post_meta($poll_id, 'vote4me_vote_total_count', true) + 1;
-                    } else {
-                        $total_votes = 1;
-                    }
-                    update_post_meta(
-                        $poll_id,
-                        'vote4me_vote_total_count',
-                        $total_votes
-                    );
-
-                    // Comptabilitzem els vots de les secretaries
-                    
-                    // Confirmem les votacions (afegim -1 al final)
-                    array_push($votes, $option_id);
-                    update_post_meta($poll_id, $votes_key, $votes);
-
-                    // Posem la clau a la llista d'usades
-                    array_push($voting_codes_used, $voting_code);
-                    update_post_meta(
-                        $poll_id,
-                        'vote4me_voting_codes_used',
-                        $voting_codes_used
-                    );
-
-                    $outputdata = array();
-                    $outputdata['votes'] = $votes;
-                    $outputdata['total_votes'] = $total_votes;
-                    $outputdata['voting_status'] = "finished";
-                    print_r(json_encode($outputdata));
+                if (!$all_restrictions_ok) {
+                    $result = array("voting_status"=>"error","message"=>"[Err7] Les votacions no respecten les condicions de paritat i territorialitat");
+                    die(json_encode($result));
                 }
+                // L'usuari està confirmant la votació, la clau està dins la llista de claus disponibles
+                // i les restriccions estan bé. Pot votar.
+                
+                // Nombre total de vots (no només d'aquest usuari)
+                if (get_post_meta($poll_id, 'vote4me_vote_total_count', true)) {
+                    $total_votes = get_post_meta($poll_id, 'vote4me_vote_total_count', true) + 1;
+                } else {
+                    $total_votes = 1;
+                }
+                update_post_meta(
+                    $poll_id,
+                    'vote4me_vote_total_count',
+                    $total_votes
+                );
+
+                // Comptabilitzem els vots de les secretaries
+                
+                // Confirmem les votacions (afegim -1 al final)
+                array_push($votes, $option_id);
+                update_post_meta($poll_id, $votes_key, $votes);
+
+                // Posem la clau a la llista d'usades
+                array_push($voting_codes_used, $voting_code);
+                update_post_meta(
+                    $poll_id,
+                    'vote4me_voting_codes_used',
+                    $voting_codes_used
+                );
+
+                $outputdata = array();
+                $outputdata['votes'] = $votes;
+                $outputdata['total_votes'] = $total_votes;
+                $outputdata['voting_status'] = "finished";
+                print_r(json_encode($outputdata));
+            } else if ($_POST['subaction'] == 'check_voting_code') {
+                // Només hem comprovat el codi de votació i és correcte
+                $outputdata = array();
+                $outputdata['voting_status'] = "voting_code_checked_ok";
+                print_r(json_encode($outputdata));                
             }
         }
         die();
+    }
+}
+
+if (!function_exists('check_vote_restrictions')) {
+    function check_vote_restrictions($votes) {
+        return false;
     }
 }
 
