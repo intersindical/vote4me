@@ -116,9 +116,10 @@ jQuery(document).ready(function() {
     // Mostrem els candidats si el codi de votació és correcte
     jQuery(this).find('#vote4me_voting_code_btn').click(function () {
         var voting_code_btn = jQuery(this);
-        
-        var voting_code = jQuery(document).find('#vote4me_voting_code').val();
-        if (voting_code == "") {
+
+        var voting_code_box = jQuery(document).find('#vote4me_voting_code');
+
+        if (voting_code_box.val() == "") {
             alert("Has d'entrar el codi de votació!")
             return;
         }
@@ -128,7 +129,7 @@ jQuery(document).ready(function() {
         var data = {
             'action': 'vote4me_vote',
             'subaction': 'check_voting_code',
-            'voting_code': voting_code,
+            'voting_code': voting_code_box.val(),
             'poll_id': jQuery(document).find('#vote4me_poll-id').val(),
         };
 
@@ -145,9 +146,14 @@ jQuery(document).ready(function() {
             }
             else {
                 // El codi de votació és correcte
+                
+                // Deshabilitem l'input box
+                voting_code_box.attr('disabled', 'yes');
+                
                 // Deshabilitem i amaguem el botó de comprovar codi
                 voting_code_btn.attr('disabled', 'yes');
-                voting_code_btn.addClass('vote4me_surveys_hide');
+                //voting_code_btn.addClass('vote4me_surveys_hide');
+                voting_code_btn.attr('style', 'display:none');
 
                 // Mostrem les candidatures
                 jQuery('.vote4me_surveys').each(function () {

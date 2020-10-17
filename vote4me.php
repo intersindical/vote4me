@@ -5,7 +5,7 @@ Plugin Uri: https://educacio.intersindical-csc.cat
 Description: Vote plugin based on e-poll by InfoTheme
 Author: Gustau Castells (Intersindical-CSC)
 Author URI: https://educacio.intersindical-csc.cat
-Version: 0.2.20
+Version: 0.2.21
 Tags: WordPress poll, responsive poll, create poll, polls, booth, polling, voting, vote, survey, election, options, contest, contest system, poll system, voting, wp voting, question answer, question, q&a, wp poll system, poll plugin, election plugin, survey plugin, wp poll, user poll, user voting, wp poll, add poll, ask question, forum, poll, voting system, wp voting, vote system, posts, pages, widget.
 Text Domain: vote4me
 Licence: GPLv2 or later
@@ -245,7 +245,7 @@ if (!function_exists('ajax_vote4me_vote')) {
             }
 
             if (isset($_POST['voting_code'])) {
-                $voting_code = (string) sanitize_text_field($_POST['voting_code']);
+                $voting_code = sanitize_text_field($_POST['voting_code']);
             } else {
                 $_SESSION['vote4me_session'] = uniqid();
                 $result = array("voting_status"=>"error","message"=>"[Err2] Error en la votació");
@@ -313,7 +313,7 @@ if (!function_exists('ajax_vote4me_vote')) {
                 if (true) {
                     // Guardem el vot a les metadates del post
                     $votes = array();
-                    if (get_post_meta($poll_id, $votes_key, true)) {
+                    if (get_post_meta($poll_id, $votes_key)) {
                         $votes = get_post_meta($poll_id, $votes_key, true);
                         array_push($votes, $option_id);
                         update_post_meta($poll_id, $votes_key, $votes);
