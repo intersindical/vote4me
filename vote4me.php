@@ -233,36 +233,28 @@ if (!function_exists('ajax_vote4me_vote')) {
 
     function ajax_vote4me_vote()
     {
-        if (isset($_POST['action']) and $_POST['action'] == 'vote4me_vote') {
+        if (isset($_POST['action']) and isset($_POST['subaction']) and $_POST['action'] == 'vote4me_vote') {
             @session_start();
 
             if (isset($_POST['poll_id'])) {
                 $poll_id = intval(sanitize_text_field($_POST['poll_id']));
-            }
-
-            if (isset($_POST['option_id'])) {
-                $option_id = (float) sanitize_text_field($_POST['option_id']);
-            }
-
-            if (isset($_POST['voting_code'])) {
-                $voting_code = (float) sanitize_text_field($_POST['voting_code']);
-            }
-
-            // Validate Poll ID
-            if (!$poll_id) {
-                $poll_id = '';
+            } else {
                 $_SESSION['vote4me_session'] = uniqid();
                 $result = array("voting_status"=>"error","message"=>"[Err1] Error en la votació");
                 die(json_encode($result));
             }
 
-            // Validate Option ID
-            if (!$option_id) {
-                $option_id = '';
+            if (isset($_POST['voting_code'])) {
+                $voting_code = (float) sanitize_text_field($_POST['voting_code']);
+            } else {
                 $_SESSION['vote4me_session'] = uniqid();
                 $result = array("voting_status"=>"error","message"=>"[Err2] Error en la votació");
                 die(json_encode($result));
             }
+
+            // Validate voting code
+            $votes_key = 'vote4me_votes_'.$poll_id.'_'.$voting_code;
+            $votes_session_key = 'vote4me_vote_session_'.$poll_id.'_'.$voting_code;
 
             if (get_post_meta($poll_id, 'vote4me_voting_codes')) {
                 $voting_codes = get_post_meta(
@@ -280,43 +272,77 @@ if (!function_exists('ajax_vote4me_vote')) {
                 );
             }
 
-            // Validate voting code
             $voting_code_is_ok = false;
-
-            if (!$voting_code) {
-                $voting_code = '';
-                $_SESSION['vote4me_session'] = uniqid();
-            } else {
+            $key = array_search($voting_code, $voting_codes);
+            if ($key !== false) {
+                // La clau és vàlida, mirem si ja ha estat usada
                 $key = array_search($voting_code, $voting_codes_used);
                 if ($key !== true) {
-                    // La clau no està a la llista de claus usades
+                    // La clau no està a la llista de claus usades i és vàlida
                     $voting_code_is_ok = true;
                 }
             }
 
             if (!$voting_code_is_ok) {
-                $result = array("voting_status"=>"error","message"=>"[Err3] Error en la votació. Clau ja usada");
+                $result = array("voting_status"=>"error","message"=>"[Err3] Error en la votació.");
                 die(json_encode($result));
             }
 
-            $votes_key = 'vote4me_votes_'.$poll_id.'_'.$voting_code;
-            $votes_session_key = 'vote4me_vote_session_'.$poll_id.'_'.$voting_code;
+            if ($_POST['subaction'] == "vote") {
+                // Vot parcial (l'usuari ha votat una candidatura
+                // però encara no ha finalitzat la votació)
 
-            if ($option_id == -1) {
+                if (isset($_POST['option_id'])) {
+                    $option_id = (float) sanitize_text_field($_POST['option_id']);
+                } else {
+                    $_SESSION['vote4me_session'] = uniqid();
+                    $result = array("voting_status"=>"error","message"=>"[Err4] Error en la votació");
+                    die(json_encode($result));
+                }
+
+                // Guardem un codi únic a la sessió
+                if (!isset($_SESSION[$votes_session_key])) {
+                    // És el primer vot, guardem un codi per evitar que pugui votar més d'una vegada
+                    $_SESSION[$votes_session_key] = uniqid();
+                    // Esborrem totes les possibles votacions prèvies
+                    update_post_meta($poll_id, $votes_key, array());
+                }
+
+                // DEBUG
+                //if (!vote4me_check_for_unique_voting($poll_id, $voting_code, $option_id)) {
+                if (true) {
+                    // Guardem el vot a les metadates del post
+                    $votes = array();
+                    if (get_post_meta($poll_id, $votes_key, true)) {
+                        $votes = get_post_meta($poll_id, $votes_key, true);
+                        array_push($votes, $option_id);
+                        update_post_meta($poll_id, $votes_key, $votes);
+                    } else {
+                        $result = array("voting_status"=>"error","message"=>"[Err5] Error en la votació");
+                        die(json_encode($result));   
+                    }
+
+                    $outputdata = array();
+                    $outputdata['option_id'] = $option_id;
+                    $outputdata['votes'] = $votes;
+                    $outputdata['voting_status'] = "voting";
+                    print_r(json_encode($outputdata));
+                }
+            } else if ($_POST['subaction'] == "confirmation") {
                 // Confirmació de la votació
 
                 // Llegim els vots parcials
                 if (get_post_meta($poll_id, $votes_key, true)) {
                     $votes = get_post_meta($poll_id, $votes_key, true);
                 } else {
-                    $result = array("voting_status"=>"error","message"=>"[Err4] Error en la votació. No hi ha vots a confirmar");
+                    $result = array("voting_status"=>"error","message"=>"[Err6] Error en la votació. No hi ha vots a confirmar");
                     die(json_encode($result));
                 }
 
                 $all_restrictions_ok = false;
                 // TODO: Comprovar paritat i territorial
 
-                // $vote4me_poll_candidates = get_post_meta($poll_id, 'vote4me_poll_candidates', true);
+                
 
                 if ($all_restrictions_ok) {
                     // L'usuari està confirmant la votació, la clau està dins la llista de claus disponibles
@@ -352,36 +378,6 @@ if (!function_exists('ajax_vote4me_vote')) {
                     $outputdata['votes'] = $votes;
                     $outputdata['total_votes'] = $total_votes;
                     $outputdata['voting_status'] = "finished";
-                    print_r(json_encode($outputdata));
-                }
-            } else {
-                // Vot parcial (l'usuari ha votat una candidatura però encara no ha finalitzat la votació)
-                // Guardem un codi únic a la sessió
-                if (!isset($_SESSION[$votes_session_key])) {
-                    // És el primer vot, guardem un codi per evitar que pugui votar més d'una vegada
-                    $_SESSION[$votes_session_key] = uniqid();
-                    // Esborrem totes les possibles votacions prèvies
-                    update_post_meta($poll_id, $votes_key, array());
-                }
-
-                // DEBUG
-                //if (!vote4me_check_for_unique_voting($poll_id, $voting_code, $option_id)) {
-                if (true) {
-                    // Guardem el vot a les metadates del post
-                    $votes = array();
-                    if (get_post_meta($poll_id, $votes_key, true)) {
-                        $votes = get_post_meta($poll_id, $votes_key, true);
-                        array_push($votes, $option_id);
-                        update_post_meta($poll_id, $votes_key, $votes);
-                    } else {
-                        $result = array("voting_status"=>"error","message"=>"[Err5] Error en la votació");
-                        die(json_encode($result));   
-                    }
-
-                    $outputdata = array();
-                    $outputdata['option_id'] = $option_id;
-                    $outputdata['votes'] = $votes;
-                    $outputdata['voting_status'] = "voting";
                     print_r(json_encode($outputdata));
                 }
             }

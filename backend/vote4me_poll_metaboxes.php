@@ -93,7 +93,7 @@ function vote4me_metabox_forms( $post )
         </tr>
 
         <tr>
-        <td><?php _e('Codis de votació (separats per comes)', 'vote4me'); ?></td>
+        <td><?php _e('Codis de votació', 'vote4me'); ?></td>
         <td colspan="3"><textarea name="vote4me_voting_codes" id="vote4me_voting_codes" rows="20" cols="100"><?php
         foreach ($vote4me_voting_codes as $code) {
             echo $code." ";

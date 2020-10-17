@@ -13,6 +13,8 @@ jQuery(document).ready(function() {
                 return;
             }
 
+            console.log("voting code: ", voting_code);
+
             // Guardem la secretaria votada (per deshabilitar les altres opcions)
             var secretaria_votada = jQuery(vote4me_item).find('.vote4me_secretaria').val();
             //console.log("Secretaria votada:" + secretaria_votada);
@@ -24,6 +26,7 @@ jQuery(document).ready(function() {
 
             var data = {
                 'action': 'vote4me_vote',
+                'subaction': 'vote',
                 'voting_code': voting_code,
                 'poll_id': jQuery(document).find('#vote4me_poll-id').val(),
                 'option_id': jQuery(vote4me_item).find('.vote4me_survey-item-id').val()
@@ -73,13 +76,15 @@ jQuery(document).ready(function() {
             return;
         }
 
+        console.log("voting code: ", voting_code);
+
         // Enviem el vot al servidor (codi de votació, votació, vot)
         // Per indicar que és per finalitzar les votacions, vot = -1
         var data = {
             'action': 'vote4me_vote',
+            'subaction': 'confirmation',
             'voting_code': voting_code,
-            'poll_id': jQuery(document).find('#vote4me_poll-id').val(),
-            'option_id': -1
+            'poll_id': jQuery(document).find('#vote4me_poll-id').val()
         };
 
         // Enviem la informació al servidor
@@ -108,20 +113,45 @@ jQuery(document).ready(function() {
 
     });
 
-    // Mostrem els candidats
+    // Mostrem els candidats si el codi de votació és correcte
     jQuery(this).find('#vote4me_voting_code_btn').click(function () {
-
         var voting_code_btn = jQuery(document).find('#vote4me_voting_code');
         if (voting_code_btn.val() == "") {
             alert("Has d'entrar el codi de votació!")
             return;
         }
         
-        voting_code_btn.attr('disabled', 'yes');
+        // Enviem el codi de votació al servidor perquè ens digui si
+        // és correcte o no
+        var data = {
+            'action': 'vote4me_vote',
+            'subaction': 'check_voting_code',
+            'voting_code': voting_code,
+            'poll_id': jQuery(document).find('#vote4me_poll-id').val(),
+        };
 
-        jQuery('.vote4me_surveys').each(function () {
-            var item = jQuery(this);
-            item.removeClass('vote4me_surveys_hide');
+        // Enviem la informació al servidor
+        jQuery.post(vote4me_ajax_obj.ajax_url, data, function (response) {
+
+            console.log(response);
+
+            var vote4me_json = jQuery.parseJSON(response);
+
+            // Comprovem la resposta
+            if (vote4me_json.voting_status == "error") {
+                alert(vote4me_json.message);
+            }
+            else {
+                // El codi de votació és correcte
+                // Deshabilitem el botó de comprovar codi
+                voting_code_btn.attr('disabled', 'yes');
+
+                // Mostrem les candidatures
+                jQuery('.vote4me_surveys').each(function () {
+                    var item = jQuery(this);
+                    item.removeClass('vote4me_surveys_hide');
+                });
+            }
         });
     });
 
