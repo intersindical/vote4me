@@ -115,8 +115,8 @@ jQuery(document).ready(function() {
 
     // Mostrem els candidats si el codi de votació és correcte
     jQuery(this).find('#vote4me_voting_code_btn').click(function () {
-        var voting_code_btn = jQuery(document).find('#vote4me_voting_code');
-        if (voting_code_btn.val() == "") {
+        var voting_code = jQuery(document).find('#vote4me_voting_code').val();
+        if (voting_code == "") {
             alert("Has d'entrar el codi de votació!")
             return;
         }
