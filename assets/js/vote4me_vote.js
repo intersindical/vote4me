@@ -37,8 +37,7 @@ jQuery(document).ready(function() {
 
                 if (vote4me_json.voting_status == "error") {
                     alert(vote4me_json.message);
-                }
-                else {
+                } else {
                     // Deshabilitem les altres opcions de la secretaria votada
                     jQuery(vote4me_item).parent().find('.vote4me_survey-item').each(function () {
                         var secretaria = jQuery(this).find('.vote4me_secretaria').val();
@@ -90,15 +89,14 @@ jQuery(document).ready(function() {
         // Enviem la informació al servidor
         jQuery.post(vote4me_ajax_obj.ajax_url, data, function (response) {
 
-            console.log(response);
+            console.log("response: ", response);
 
             var vote4me_json = jQuery.parseJSON(response);
 
             // Comprovem la resposta
             if (vote4me_json.voting_status == "error") {
                 alert(vote4me_json.message);
-            }
-            else {
+            } else {
                 // Amaga tots els botons de votació
                 jQuery(document).find('.vote4me_survey-item').each(function() {
                     jQuery(this).find('.vote4me_survey-vote-button').addClass('vote4me_scale_hide');

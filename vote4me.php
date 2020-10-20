@@ -240,7 +240,10 @@ if (!function_exists('ajax_vote4me_vote')) {
                 $poll_id = intval(sanitize_text_field($_POST['poll_id']));
             } else {
                 $_SESSION['vote4me_session'] = uniqid();
-                $result = array("voting_status"=>"error","message"=>"[Err1] Error en la votació");
+                $result = array(
+                    "voting_status"=>"error",
+                    "message"=>"[Err1] Error en la votació"
+                );
                 die(json_encode($result));
             }
 
@@ -248,7 +251,10 @@ if (!function_exists('ajax_vote4me_vote')) {
                 $voting_code = sanitize_text_field($_POST['voting_code']);
             } else {
                 $_SESSION['vote4me_session'] = uniqid();
-                $result = array("voting_status"=>"error","message"=>"[Err2] Error en la votació");
+                $result = array(
+                    "voting_status"=>"error",
+                    "message"=>"[Err2] Error en la votació"
+                );
                 die(json_encode($result));
             }
 
@@ -256,6 +262,7 @@ if (!function_exists('ajax_vote4me_vote')) {
             $votes_key = 'vote4me_votes_'.$poll_id.'_'.$voting_code;
             $votes_session_key = 'vote4me_vote_session_'.$poll_id.'_'.$voting_code;
 
+            $voting_codes = array();
             if (get_post_meta($poll_id, 'vote4me_voting_codes')) {
                 $voting_codes = get_post_meta(
                     $poll_id,
@@ -264,6 +271,7 @@ if (!function_exists('ajax_vote4me_vote')) {
                 );
             }
 
+            $voting_codes_used = array();
             if (get_post_meta($poll_id, 'vote4me_voting_codes_used')) {
                 $voting_codes_used = get_post_meta(
                     $poll_id,
@@ -284,7 +292,10 @@ if (!function_exists('ajax_vote4me_vote')) {
             }
 
             if (!$voting_code_is_ok) {
-                $result = array("voting_status"=>"error","message"=>"[Err3] Error en el codi de votació.");
+                $result = array(
+                    "voting_status"=>"error",
+                    "message"=>"[Err3] Error en el codi de votació."
+                );
                 die(json_encode($result));
             }
  
@@ -293,6 +304,8 @@ if (!function_exists('ajax_vote4me_vote')) {
 
                 // Hem de reiniciar la votació d'aquest codi
                 // (per si s'ha quedat a mig votar)
+                // TODO: Estudiar si s'ha de poder tornar a votar o un
+                // cop votat ja no s'hauria de poder modificar el vot.
                 if (get_post_meta($poll_id, $votes_key)) {
                     delete_post_meta($poll_id, $votes_key);
                 }
@@ -310,7 +323,10 @@ if (!function_exists('ajax_vote4me_vote')) {
                     $option_id = sanitize_text_field($_POST['option_id']);
                 } else {
                     $_SESSION['vote4me_session'] = uniqid();
-                    $result = array("voting_status"=>"error","message"=>"[Err4] Error en la votació");
+                    $result = array(
+                        "voting_status"=>"error",
+                        "message"=>"[Err4] Error en la votació"
+                    );
                     die(json_encode($result));
                 }
 
@@ -351,13 +367,19 @@ if (!function_exists('ajax_vote4me_vote')) {
                 if (get_post_meta($poll_id, $votes_key, true)) {
                     $votes = get_post_meta($poll_id, $votes_key, true);
                 } else {
-                    $result = array("voting_status"=>"error", "message"=>"[Err6] Error en la votació. No hi ha vots a confirmar");
+                    $result = array(
+                        "voting_status"=>"error",
+                        "message"=>"[Err6] Error en la votació. No hi ha vots a confirmar"
+                    );
                     die(json_encode($result));
                 }
 
                 // Comprovar paritat i territorial
                 if (!vote4me_check_vote_restrictions($poll_id, $votes)) {
-                    $result = array("voting_status"=>"error", "message"=>"[Err7] Les votacions no respecten les condicions de paritat i territorialitat");
+                    $result = array(
+                        "voting_status"=>"error",
+                        "message"=>"[Err7] Les votacions no respecten les condicions"
+                    );
                     die(json_encode($result));
                 }
 
@@ -388,7 +410,10 @@ if (!function_exists('ajax_vote4me_vote')) {
                 // Posem la clau de votació a la llista de claus usades
                 $voting_codes_used[] = $voting_code;
                 if (!update_post_meta($poll_id, 'vote4me_voting_codes_used', $voting_codes_used)) {
-                    $result = array("voting_status"=>"error", "message"=>"[Err8] No es poden guardar la clau de votació");
+                    $result = array(
+                        "voting_status"=>"error",
+                        "message"=>"[Err8] No es poden guardar la clau de votació"
+                    );
                     die(json_encode($result));
                 }
 
@@ -448,13 +473,17 @@ if (!function_exists('vote4me_check_vote_restrictions')) {
                     $territorials[$candidate['territorial']]++;
                 }
             } else {
-                $result = array("voting_status"=>"error","message"=>"vote4me_check_vote_restrictions: No puc trobar el candidat amb id");
+                $result = array(
+                    "voting_status"=>"error",
+                    "message"=>"No puc trobar el candidat votat"
+                );
                 die(json_encode($result));
                 return false;
             }
         }
 
-        // Usem la territorial de Catalunya pels vots en blanc, per tant no els comptabilitzem
+        // Usem la territorial de Catalunya pels vots en blanc
+        // no els comptabilitzem pel tema de la territorialitat
         $territorials["Catalunya"] = 0;
 
         // Mirem si compleix les condicions o no
@@ -474,7 +503,10 @@ if (!function_exists('vote4me_check_vote_restrictions')) {
 
         if ($num_territorials < $magic_number) {
             // No hi ha prou gent de diferents territorials
-            $result = array("voting_status"=>"error","message"=>"No has escollit prou candidats de diferents territorials");
+            $result = array(
+                "voting_status"=>"error",
+                "message"=>"No has escollit prou candidats de diferents territorials"
+            );
             die(json_encode($result));
             return false;
         }
