@@ -107,7 +107,7 @@ function vote4me_metabox_forms( $post )
     <?php if (!empty($vote4me_poll_candidates)) :
         $i=0;
         foreach($vote4me_poll_candidates as $vote4me_candidate):
-            $pollKEYIt = (float)$vote4me_candidate['id'];
+            $pollKEYIt = strval($vote4me_candidate['id']);
             $vote4me_poll_vote_count = (int)get_post_meta($post->ID, 'vote4me_vote_count_'.$pollKEYIt, true);
             
             if (!$vote4me_poll_vote_count) {

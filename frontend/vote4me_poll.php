@@ -86,7 +86,7 @@ function vote4me_add_shortcode($atts, $content = null)
                 foreach ($vote4me_poll_candidates as $vote4me_candidate) :
                     $vote4me_poll_vote_count = (int)get_post_meta(
                         get_the_id(),
-                        'vote4me_vote_count_'.(float)$vote4me_candidate['id'], true
+                        'vote4me_vote_count_'.strval($vote4me_candidate['id']), true
                     );
                     //print_r($vote4me_candidate['id']);
                     $vote4me_poll_vote_percentage =0;
