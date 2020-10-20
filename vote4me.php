@@ -5,7 +5,7 @@ Plugin Uri: https://educacio.intersindical-csc.cat
 Description: Vote plugin based on e-poll by InfoTheme
 Author: Gustau Castells (Intersindical-CSC)
 Author URI: https://educacio.intersindical-csc.cat
-Version: 0.2.31
+Version: 0.2.32
 Tags: WordPress poll, responsive poll, create poll, polls, booth, polling, voting, vote, survey, election, options, contest, contest system, poll system, voting, wp voting, question answer, question, q&a, wp poll system, poll plugin, election plugin, survey plugin, wp poll, user poll, user voting, wp poll, add poll, ask question, forum, poll, voting system, wp voting, vote system, posts, pages, widget.
 Text Domain: vote4me
 Licence: GPLv2 or later
@@ -346,12 +346,11 @@ if (!function_exists('ajax_vote4me_vote')) {
                     // Ja hi ha vots parcials, afegim aquest vot als que ja hi ha
                     $votes = get_post_meta($poll_id, $votes_key, true);
                     $votes[] = $option_id;
-                    update_post_meta($poll_id, $votes_key, $votes);
                 } else {
                     // És el primer vot, el guardem
                     $votes = array($option_id);
-                    update_post_meta($poll_id, $votes_key, $votes);
                 }
+                update_post_meta($poll_id, $votes_key, $votes);
 
                 $output_data = array();
                 $output_data['option_id'] = $option_id;
@@ -409,14 +408,11 @@ if (!function_exists('ajax_vote4me_vote')) {
                 update_post_meta($poll_id, $votes_key, $votes);
 
                 // Posem la clau de votació a la llista de claus usades
+                
+                // FIXME : Aquesta línia peta!
                 $voting_codes_used[] = $voting_code;
-                if (!update_post_meta($poll_id, 'vote4me_voting_codes_used', $voting_codes_used)) {
-                    $result = array(
-                        "voting_status" => "error",
-                        "message" => "[Err8] No es pot guardar la clau de votació"
-                    );
-                    die(json_encode($result));
-                }
+                
+                update_post_meta($poll_id, 'vote4me_voting_codes_used', $voting_codes_used);
 
                 $output_data = array();
                 $output_data['votes'] = $votes;
