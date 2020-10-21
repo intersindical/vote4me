@@ -5,7 +5,7 @@ Plugin Uri: https://educacio.intersindical-csc.cat
 Description: Vote plugin based on e-poll by InfoTheme
 Author: Gustau Castells (Intersindical-CSC)
 Author URI: https://educacio.intersindical-csc.cat
-Version: 0.2.33
+Version: 0.2.35
 Tags: WordPress poll, responsive poll, create poll, polls, booth, polling, voting, vote, survey, election, options, contest, contest system, poll system, voting, wp voting, question answer, question, q&a, wp poll system, poll plugin, election plugin, survey plugin, wp poll, user poll, user voting, wp poll, add poll, ask question, forum, poll, voting system, wp voting, vote system, posts, pages, widget.
 Text Domain: vote4me
 Licence: GPLv2 or later
@@ -226,6 +226,17 @@ if (!function_exists('get_vote4me_poll_template')) {
     }
 }
 
+if (!function_exists('vote4me_die')) {
+    function vote4me_die($message)
+    {
+        $result = array(
+            "voting_status" => "error",
+            "message" => $message
+        );
+        die(json_encode($result));
+    }
+}
+
 if (!function_exists('ajax_vote4me_vote')) {
 
     add_action('wp_ajax_vote4me_vote', 'ajax_vote4me_vote');
@@ -239,28 +250,17 @@ if (!function_exists('ajax_vote4me_vote')) {
             if (isset($_POST['poll_id'])) {
                 $poll_id = intval(sanitize_text_field($_POST['poll_id']));
             } else {
-                $_SESSION['vote4me_session'] = uniqid();
-                $result = array(
-                    "voting_status" => "error",
-                    "message" => "[Err1] Error en la votació"
-                );
-                die(json_encode($result));
+                vote4me_die("[Err1] Error en la votació");
             }
 
             if (isset($_POST['voting_code'])) {
                 $voting_code = sanitize_text_field($_POST['voting_code']);
             } else {
-                $_SESSION['vote4me_session'] = uniqid();
-                $result = array(
-                    "voting_status" => "error",
-                    "message" => "[Err2] Error en la votació"
-                );
-                die(json_encode($result));
+                vote4me_die("[Err2] Error en la votació");
             }
 
             // Validate voting code
             $votes_key = 'vote4me_votes_'.$poll_id.'_'.$voting_code;
-            $votes_session_key = 'vote4me_vote_session_'.$poll_id.'_'.$voting_code;
 
             $voting_codes = array();
             if (get_post_meta($poll_id, 'vote4me_voting_codes')) {
@@ -281,31 +281,28 @@ if (!function_exists('ajax_vote4me_vote')) {
             }
 
             $voting_code_is_ok = false;
-            $key = array_search($voting_code, $voting_codes, true);
+            $key = array_search($voting_code, $voting_codes);
             if ($key !== false) {
-                // La clau és vàlida, mirem si ja ha estat usada
-                $key = array_search($voting_code, $voting_codes_used, true);
-                if ($key !== true) {
-                    // La clau no està a la llista de claus usades i és vàlida
+                // El codi és vàlid, mirem si ja ha estat usat
+                $key = array_search($voting_code, $voting_codes_used);
+                if ($key === false) {
+                    // El codi no està a la llista de codis usats i és vàlid
                     $voting_code_is_ok = true;
+                } else {
+                    // TODO: Estudiar si s'ha de poder tornar a votar o un
+                    // cop votat ja no s'hauria de poder modificar el vot.
+                    vote4me_die("[Err3] Ja s'ha votat amb aquest codi");
                 }
+            } else {
+                vote4me_die("[Err4] Codi de votació no vàlid");
             }
 
-            if (!$voting_code_is_ok) {
-                $result = array(
-                    "voting_status" => "error",
-                    "message" => "[Err3] Error en el codi de votació."
-                );
-                die(json_encode($result));
-            }
- 
             if ($_POST['subaction'] == 'check_voting_code') {
-                // Només hem comprovat el codi de votació i és correcte.
+                // Només cal comprovar el codi de votació
+                // i ja hem vist que és correcte
 
-                // Hem de reiniciar la votació d'aquest codi
-                // (per si s'ha quedat a mig votar)
-                // TODO: Estudiar si s'ha de poder tornar a votar o un
-                // cop votat ja no s'hauria de poder modificar el vot.
+                // Hem de reiniciar la votació parcial d'aquest
+                // codi (per si s'ha quedat a mig votar)
                 if (get_post_meta($poll_id, $votes_key)) {
                     delete_post_meta($poll_id, $votes_key);
                 }
@@ -315,31 +312,16 @@ if (!function_exists('ajax_vote4me_vote')) {
                 print_r(json_encode($output_data));
 
             } else if ($_POST['subaction'] == "vote") {
-
                 // Vot parcial (l'usuari ha votat una candidatura
                 // però encara no ha finalitzat la votació)
 
                 if (isset($_POST['option_id'])) {
                     $option_id = sanitize_text_field($_POST['option_id']);
                 } else {
-                    $_SESSION['vote4me_session'] = uniqid();
-                    $result = array(
-                        "voting_status" => "error",
-                        "message" => "[Err4] Error en la votació"
-                    );
-                    die(json_encode($result));
-                }
-
-                // Guardem un codi únic a la sessió
-                if (!isset($_SESSION[$votes_session_key])) {
-                    // És el primer vot, guardem un codi per evitar que pugui votar més d'una vegada
-                    $_SESSION[$votes_session_key] = uniqid();
-                    // Esborrem totes les possibles votacions prèvies
-                    update_post_meta($poll_id, $votes_key, array());
+                    vote4me_die("[Err5] Error en la votació");
                 }
 
                 // DEBUG
-                //if (!vote4me_check_for_unique_voting($poll_id, $voting_code, $option_id)) {
                 // Guardem el vot a les metadates del post
                 $votes = array();
                 if (get_post_meta($poll_id, $votes_key)) {
@@ -365,20 +347,14 @@ if (!function_exists('ajax_vote4me_vote')) {
                 if (get_post_meta($poll_id, $votes_key, true)) {
                     $votes = get_post_meta($poll_id, $votes_key, true);
                 } else {
-                    $result = array(
-                        "voting_status" => "error",
-                        "message" => "[Err6] Error en la votació. No hi ha vots a confirmar"
-                    );
-                    die(json_encode($result));
+                    vote4me_die("[Err6] Error en la votació. No hi ha vots a confirmar");
                 }
 
                 // Comprovar paritat i territorial
                 if (!vote4me_check_vote_restrictions($poll_id, $votes)) {
-                    $result = array(
-                        "voting_status" => "error",
-                        "message" => "[Err7] Les votacions no respecten les condicions"
+                    vote4me_die(
+                        "[Err7] Les votacions no respecten les condicions de paritat i territorialitat"
                     );
-                    die(json_encode($result));
                 }
 
                 // L'usuari està confirmant la votació, la clau està dins la
@@ -401,17 +377,16 @@ if (!function_exists('ajax_vote4me_vote')) {
                 // Comptabilitzem els vots de les secretaries
                 
                 // Confirmem les votacions (afegim "Closed" al final)
-                // El que determinal si podrà votar o no no és aquest "closed"
-                // sinó que el codi de votació estarà a la llista de codis
-                // usats
+                // El que determina si podrà votar o no no és aquest "closed"
+                // sinó que el codi de votació estarà a la llista de codis usats
                 $votes[] = "Closed";
                 update_post_meta($poll_id, $votes_key, $votes);
 
-                // Posem la clau de votació a la llista de claus usades
+                // Posem el codi de votació a la llista de codis usats
                 if (is_array($voting_codes_used)) {
                     $voting_codes_used[] = $voting_code;
                 } else {
-                    // És la primera clau de votació que guardem com a usada
+                    // És el primer codi de votació que guardem com a usat
                     $voting_codes_used = array($voting_code);
                 }
                 update_post_meta(
@@ -533,25 +508,6 @@ if (!function_exists('vote4me_get_candidate_by_id')) {
             "voting_status" => "error",
             "message" => "A get_candidate_by_id no puc trobar el candidat");
         die(json_encode($result));
-    }
-}
-
-// Si retorna true vol dir que ja ha votat
-if (!function_exists('vote4me_check_for_unique_voting')) {
-    function vote4me_check_for_unique_voting($poll_id, $voting_code)
-    {
-        $votes_session_key = 'vote4me_vote_session_'.$poll_id.'_'.$voting_code;
-        if (isset($_SESSION[$votes_session_key])) {
-            return true;
-        } else {
-            return false;
-        }
-                
-        if (isset($_SESSION['vote4me_session'])) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }
 
