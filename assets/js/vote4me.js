@@ -12,12 +12,14 @@ jQuery(document).ready(function($) {
     });
 
     jQuery('.vote4me_color-field').wpColorPicker();
+
     jQuery('#vote4me_append_option_filed .vote4me_append_option_filed_tr').each(function() {
         var it_ele_container = jQuery(this);
         jQuery(this).find('#vote4me_poll_option_rm_btn').click(function() {
             jQuery(it_ele_container).remove();
         });
     });
+
     jQuery('.vote4me_add_option_btn').click(function() {
         var date = new Date();
         var components = [
@@ -43,7 +45,7 @@ jQuery(document).ready(function($) {
 				<td><input type="button" class="button" id="vote4me_poll_option_btn" name="vote4me_poll_option_btn" value="Upload"></td></tr> \
 			<tr><td>Imatge de fons</td> \
 				<td><input type="url" class="widefat" id="vote4me_poll_option_cover_img" name="vote4me_poll_option_cover_img[]" value=""/></td> \
-				<td><input type="button" class="button" id="vote4me_poll_option_ci_btn" name="vote4me_poll_option_ci_btn" value="Upload"></td></tr> \
+                <td><input type="button" class="button" id="vote4me_poll_option_ci_btn" name="vote4me_poll_option_ci_btn" value="Upload"></td></tr> \
 			<tr><td>Sexe</td> \
 				<td><select class="widefat" id="vote4me_poll_option_sex" name="vote4me_poll_option_sex[]" value="" required> \
 					<option value="male">Male</option> \
@@ -74,7 +76,8 @@ jQuery(document).ready(function($) {
 					<option value="Ensenyament concertat i privat">Ensenyament concertat i privat</option> \
 					<option value="Juntes de personal">Juntes de personal</option> \
 					</select></td></tr> \
-			<tr><td colspan="2"><input type="button" class="button" id="vote4me_poll_option_rm_btn" name="vote4me_poll_option_rm_btn" value="Remove This Option"></td></tr></table></td></tr>');
+            <tr><td colspan="2"><input type="button" class="button" id="vote4me_poll_option_rm_btn" \
+            name="vote4me_poll_option_rm_btn" value="Remove This Option"></td></tr></table></td></tr>');
 
         jQuery('#vote4me_append_option_filed .vote4me_append_option_filed_tr').each(function() {
             var it_ele_container = jQuery(this);
@@ -82,6 +85,7 @@ jQuery(document).ready(function($) {
                 jQuery(it_ele_container).remove();
             });
         });
+
         jQuery('#vote4me_append_option_filed .vote4me_append_option_filed_tr').each(function() {
 
             jQuery(this).find('#vote4me_poll_option_btn').click(function(e) {
@@ -91,46 +95,41 @@ jQuery(document).ready(function($) {
                         title: 'Upload Image',
                         // mutiple: true if you want to upload multiple files at once
                         multiple: false
-                    }).open()
-                    .on('select', function(e) {
-                        // This will return the selected image from the Media Uploader, the result is an object
-                        var uploaded_image = image.state().get('selection').first();
-                        // We convert uploaded_image to a JSON object to make accessing it easier
-                        // Output to the console uploaded_image
+                }).open().on('select', function(e) {
+                    // This will return the selected image from the Media Uploader, the result is an object
+                    var uploaded_image = image.state().get('selection').first();
+                    // We convert uploaded_image to a JSON object to make accessing it easier
+                    // Output to the console uploaded_image
 
-                        var image_url = uploaded_image.toJSON().url;
-                        // Let's assign the url value to the input field
-                        //console.log(img_val);
+                    var image_url = uploaded_image.toJSON().url;
+                    // Let's assign the url value to the input field
+                    //console.log(img_val);
 
-                        img_val.val(image_url);
-                    });
+                    img_val.val(image_url);
+                });
             });
-
 
             jQuery(this).find('#vote4me_poll_option_ci_btn').click(function(e) {
                 var img_val = jQuery(this).parent().parent().find('#vote4me_poll_option_cover_img');
                 var image = wp.media({
-                        title: 'Upload Image',
-                        // mutiple: true if you want to upload multiple files at once
-                        multiple: false
-                    }).open()
-                    .on('select', function(e) {
-                        // This will return the selected image from the Media Uploader, the result is an object
-                        var uploaded_image = image.state().get('selection').first();
-                        // We convert uploaded_image to a JSON object to make accessing it easier
-                        // Output to the console uploaded_image
+                    title: 'Upload Image',
+                    // mutiple: true if you want to upload multiple files at once
+                    multiple: false
+                }).open().on('select', function(e) {
+                    // This will return the selected image from the Media Uploader, the result is an object
+                    var uploaded_image = image.state().get('selection').first();
+                    // We convert uploaded_image to a JSON object to make accessing it easier
+                    // Output to the console uploaded_image
 
-                        var image_url = uploaded_image.toJSON().url;
-                        // Let's assign the url value to the input field
-                        //console.log(img_val);
+                    var image_url = uploaded_image.toJSON().url;
+                    // Let's assign the url value to the input field
+                    //console.log(img_val);
 
-                        img_val.val(image_url);
-                    });
+                    img_val.val(image_url);
+                });
             });
         });
     });
-
-
 
     jQuery('#vote4me_append_option_filed .vote4me_append_option_filed_tr').each(function() {
 
@@ -138,44 +137,61 @@ jQuery(document).ready(function($) {
 
             var img_val = jQuery(this).parent().parent().find('#vote4me_poll_option_img');
             var image = wp.media({
-                    title: 'Upload Image',
-                    // mutiple: true if you want to upload multiple files at once
-                    multiple: false
-                }).open()
-                .on('select', function(e) {
-                    // This will return the selected image from the Media Uploader, the result is an object
-                    var uploaded_image = image.state().get('selection').first();
-                    // We convert uploaded_image to a JSON object to make accessing it easier
-                    // Output to the console uploaded_image
+                title: 'Upload Image',
+                // mutiple: true if you want to upload multiple files at once
+                multiple: false
+            }).open().on('select', function(e) {
+                // This will return the selected image from the Media Uploader, the result is an object
+                var uploaded_image = image.state().get('selection').first();
+                // We convert uploaded_image to a JSON object to make accessing it easier
+                // Output to the console uploaded_image
 
-                    var image_url = uploaded_image.toJSON().url;
-                    // Let's assign the url value to the input field
-                    //console.log(img_val);
+                var image_url = uploaded_image.toJSON().url;
+                // Let's assign the url value to the input field
+                //console.log(img_val);
 
-                    img_val.val(image_url);
-                });
+                img_val.val(image_url);
+            });
         });
-
 
         jQuery(this).find('#vote4me_poll_option_ci_btn').click(function(e) {
             var img_val = jQuery(this).parent().parent().find('#vote4me_poll_option_cover_img');
             var image = wp.media({
-                    title: 'Upload Image',
-                    // mutiple: true if you want to upload multiple files at once
-                    multiple: false
-                }).open()
-                .on('select', function(e) {
-                    // This will return the selected image from the Media Uploader, the result is an object
-                    var uploaded_image = image.state().get('selection').first();
-                    // We convert uploaded_image to a JSON object to make accessing it easier
-                    // Output to the console uploaded_image
+                title: 'Upload Image',
+                // mutiple: true if you want to upload multiple files at once
+                multiple: false
+            }).open().on('select', function(e) {
+                // This will return the selected image from the Media Uploader, the result is an object
+                var uploaded_image = image.state().get('selection').first();
+                // We convert uploaded_image to a JSON object to make accessing it easier
+                // Output to the console uploaded_image
 
-                    var image_url = uploaded_image.toJSON().url;
-                    // Let's assign the url value to the input field
-                    //console.log(img_val);
+                var image_url = uploaded_image.toJSON().url;
+                // Let's assign the url value to the input field
+                //console.log(img_val);
 
-                    img_val.val(image_url);
-                });
+                img_val.val(image_url);
+            });
+        });
+    });
+
+    jQuery('#vote4me_voting_codes_file_btn').click(function (e) {
+        var file_val = jQuery(this).parent().parent().find('#vote4me_voting_codes_file');
+        var file = wp.media({
+            title: 'Upload Codes',
+            // mutiple: true if you want to upload multiple files at once
+            multiple: false
+        }).open().on('select', function (e) {
+            // This will return the selected image from the Media Uploader, the result is an object
+            var uploaded_file = file.state().get('selection').first();
+            // We convert uploaded_image to a JSON object to make accessing it easier
+            // Output to the console uploaded_image
+
+            var file_url = uploaded_file.toJSON().url;
+            // Let's assign the url value to the input field
+            //console.log(img_val);
+
+            file_val.val(file_url);
         });
     });
 });

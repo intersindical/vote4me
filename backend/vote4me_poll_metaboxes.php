@@ -35,7 +35,7 @@ function vote4me_metabox_forms( $post )
     $vote4me_poll_ui = get_post_meta($post->ID, 'vote4me_poll_ui', true);
     $vote4me_poll_vote_total_count = (int)get_post_meta($post->ID, 'vote4me_vote_total_count', true);
     $vote4me_poll_container_color_primary = get_post_meta($post->ID, 'vote4me_poll_container_color_primary', true);
-    $vote4me_voting_codes = get_post_meta($post->ID, 'vote4me_voting_codes', true);
+    $vote4me_voting_codes_file = get_post_meta($post->ID, 'vote4me_voting_codes_file', true);
 
     if (get_post_meta($post->ID, 'vote4me_poll_candidates', true)) {
         $vote4me_poll_candidates = get_post_meta($post->ID, 'vote4me_poll_candidates', true);	
@@ -92,15 +92,17 @@ function vote4me_metabox_forms( $post )
             </td>
         </tr>
 
-        <tr>
-        <td><?php _e('Codis de votació', 'vote4me'); ?></td>
-        <td colspan="3"><textarea name="vote4me_voting_codes" id="vote4me_voting_codes" rows="20" cols="100"><?php
-        foreach ($vote4me_voting_codes as $code) {
-            echo $code." ";
-        }?></textarea>
-        </td>
+            <td><?php _e('Codis de votació', 'vote4me');?></td>
+            <td><input type="url" class="widefat" id="vote4me_voting_codes_file" name="vote4me_voting_codes_file" value="<?php
+            if (!empty($vote4me_voting_codes_file)) {
+                echo esc_attr($vote4me_voting_codes_file, 'vote4me');
+            }?>"/>
+            </td>
+            <td>
+                <input type="button" class="button" id="vote4me_voting_codes_file_btn" name="vote4me_voting_codes_file_btn" value="<?php _e('Upload', 'vote4me');?>">
+            </td>
         </tr>
-        
+
     </table>
     
     <table class="form-table" id="vote4me_append_option_filed">
@@ -277,21 +279,23 @@ function vote4me_save_options( $post_id )
 
     // Updating Poll Style
     if (isset($_POST['vote4me_poll_style'])) {
-        $vote4me_poll_style =  sanitize_text_field($_POST['vote4me_poll_style']);
+        $vote4me_poll_style = sanitize_text_field($_POST['vote4me_poll_style']);
         update_post_meta($post_id, 'vote4me_poll_style', $vote4me_poll_style);
     }
 
     // Updating Poll Container Primary Color
     if (isset($_POST['vote4me_poll_container_color_primary'])) {
-        $vote4me_poll_ui =  sanitize_text_field($_POST['vote4me_poll_container_color_primary']);
+        $vote4me_poll_ui = sanitize_text_field(
+            $_POST['vote4me_poll_container_color_primary']
+        );
         update_post_meta($post_id, 'vote4me_poll_container_color_primary', $vote4me_poll_ui);
     }
 
-    // Updating voting codes
-    if (isset($_POST['vote4me_voting_codes'])) {
-        $vote4me_voting_codes = sanitize_text_field($_POST['vote4me_voting_codes']);
-        $vote4me_voting_codes = explode(" ", $vote4me_voting_codes);
-        update_post_meta($post_id, 'vote4me_voting_codes', $vote4me_voting_codes);
+    if (isset($_POST['vote4me_voting_codes_file'])) {
+        $vote4me_voting_codes_file = sanitize_text_field(
+            $_POST['vote4me_voting_codes_file']
+        );
+        update_post_meta($post_id, 'vote4me_voting_codes_file', $vote4me_voting_codes_file);
     }
 
     // Updating Poll Container Secondary Color

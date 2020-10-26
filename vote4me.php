@@ -262,15 +262,19 @@ if (!function_exists('ajax_vote4me_vote')) {
             // Validate voting code
             $votes_key = 'vote4me_votes_'.$poll_id.'_'.$voting_code;
 
-            $voting_codes = array();
-            if (get_post_meta($poll_id, 'vote4me_voting_codes')) {
-                $voting_codes = get_post_meta(
+            // Read voting codes
+            if (get_post_meta($poll_id, 'vote4me_voting_codes_file')) {
+                $voting_codes_file = get_post_meta(
                     $poll_id,
-                    'vote4me_voting_codes',
+                    'vote4me_voting_codes_file',
                     true
                 );
+                $voting_codes = file_get_contents($voting_codes_file);
+                $voting_codes = explode("\n", $voting_codes);
+            } else {
+                vote4me_die("[Err3] No puc llegir els codis de votació");
             }
-
+            
             $voting_codes_used = array();
             if (get_post_meta($poll_id, 'vote4me_voting_codes_used')) {
                 $voting_codes_used = get_post_meta(
