@@ -30,17 +30,15 @@ function decrypt($ciphertext, $key) {
     }    
 }
 
-function gen_codes() {
-$num_codis = 50;
-$mida_codi_bytes = 16;
+function gen_codes($num_codis) {
 
-for ($i=0; $i<$num_codis; $i++) {
-    $bytes = openssl_random_pseudo_bytes($mida_codi_bytes);
-    $hex   = bin2hex($bytes);
-    //var_dump($hex);
-    echo $hex.", ";
-}
+    $mida_codi_bytes = 16;
 
+    for ($i=0; $i<$num_codis; $i++) {
+        $bytes = openssl_random_pseudo_bytes($mida_codi_bytes);
+        $hex   = bin2hex($bytes);
+        echo $hex.", ";
+    }
 }
 
 $key = openssl_random_pseudo_bytes(16);
